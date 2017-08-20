@@ -21,6 +21,9 @@ export class Form extends React.Component<IProps> {
 
   public static navigationOptions = {
     title: "Margin Calculator",
+    headerStyle: {
+      backgroundColor: "skyblue",
+    },
   };
 
   public render() {
@@ -43,41 +46,65 @@ export class Form extends React.Component<IProps> {
     return (
       <View style={styles.container}>
 
-        <Text>Cost Price</Text>
-        <TextInput
-          style={styles.textInput}
-          keyboardType="numeric"
-          onChangeText={onCostPriceChanged}
-          onEndEditing={onRecalculate}
-          value={costPrice}
-        />
+        <View style={styles.inputContainer}>
+          <View style={styles.inputTextContainer}>
+            <Text style={styles.textLabel}>
+              Cost Price
+            </Text>
+          </View>
+          <TextInput
+            style={styles.textInput}
+            keyboardType="numeric"
+            onChangeText={onCostPriceChanged}
+            onEndEditing={onRecalculate}
+            value={costPrice}
+          />
+        </View>
 
-        <Text>Sale Price</Text>
-        <TextInput
-          style={styles.textInput}
-          keyboardType="numeric"
-          onChangeText={onSalePriceChanged}
-          onEndEditing={onRecalculate}
-          value={salePrice}
-        />
+        <View style={styles.inputContainer}>
+          <View style={styles.inputTextContainer}>
+            <Text style={styles.textLabel}>
+              Sale Price
+            </Text>
+          </View>
+          <TextInput
+            style={styles.textInput}
+            keyboardType="numeric"
+            onChangeText={onSalePriceChanged}
+            onEndEditing={onRecalculate}
+            value={salePrice}
+          />
+        </View>
 
-        <Text>Margin</Text>
-        <TextInput
-          style={styles.textInput}
-          keyboardType="numeric"
-          onChangeText={onMarginChanged}
-          onEndEditing={onRecalculate}
-          value={margin}
-        />
+        <View style={styles.inputContainer}>
+          <View style={styles.inputTextContainer}>
+            <Text style={styles.textLabel}>
+              Margin (%)
+            </Text>
+          </View>
+          <TextInput
+            style={styles.textInput}
+            keyboardType="numeric"
+            onChangeText={onMarginChanged}
+            onEndEditing={onRecalculate}
+            value={margin}
+          />
+        </View>
 
-        <Text>Markup</Text>
-        <TextInput
-          style={styles.textInput}
-          keyboardType="numeric"
-          onChangeText={onMarkupChanged}
-          onEndEditing={onRecalculate}
-          value={markup}
-        />
+        <View style={styles.inputContainer}>
+          <View style={styles.inputTextContainer}>
+            <Text style={styles.textLabel}>
+              Markup (%)
+            </Text>
+          </View>
+          <TextInput
+            style={styles.textInput}
+            keyboardType="numeric"
+            onChangeText={onMarkupChanged}
+            onEndEditing={onRecalculate}
+            value={markup}
+          />
+        </View>
 
         <Button
           onPress={onReset}
@@ -112,45 +139,32 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  textInput: {
+  inputContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  inputTextContainer: {
+    flex: 0.25,
     height: 40,
+    borderWidth: 1,
+    borderColor: "#AFAFAF",
+    borderTopLeftRadius: 2,
+    borderBottomLeftRadius: 2,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  textLabel: {
+    fontWeight: "bold",
+  },
+  textInput: {
+    flex: 0.45,
+    height: 40,
+    borderWidth: 1,
+    borderLeftWidth: 0,
+    borderColor: "#AFAFAF",
+    borderTopRightRadius: 2,
+    borderBottomRightRadius: 2,
   },
 });
-
-// export default class MarginCalculator extends React.Component {
-//   public render() {
-//     return (
-//       <View style={styles.container}>
-//         <Text style={styles.welcome}>
-//           Welcome to React Native!
-//         </Text>
-//         <Text style={styles.instructions}>
-//           To get started, edit index.android.js
-//         </Text>
-//         <Text style={styles.instructions}>
-//           Double tap R on your keyboard to reload,{"\n"}
-//           Shake or press menu button for dev menu
-//         </Text>
-//       </View>
-//     );
-//   }
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: "center",
-//     alignItems: "center",
-//     backgroundColor: "#F5FCFF",
-//   },
-//   welcome: {
-//     fontSize: 20,
-//     textAlign: "center",
-//     margin: 10,
-//   },
-//   instructions: {
-//     textAlign: "center",
-//     color: "#333333",
-//     marginBottom: 5,
-//   },
-// });
