@@ -1,53 +1,40 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
+import * as React from "react";
+import { Provider } from "react-redux";
+import { AppRegistry } from "react-native";
+import { addNavigationHelpers } from "react-navigation";
+import { connect } from "react-redux";
+import { configureStore } from "./store";
+import { AppNavigator } from "./navigation";
 
-import React, { Component } from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
+const store = configureStore();
 
-export default class MarginCalculator extends Component {
-  render() {
+class App extends React.Component<{
+  navigation: any;
+  dispatch: any;
+}> {
+  public render() {
+    const helpers = {
+      dispatch: this.props.dispatch,
+      state: this.props.navigation,
+    };
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Double tap R on your keyboard to reload,{'\n'}
-          Shake or press menu button for dev menu
-        </Text>
-      </View>
+      <AppNavigator navigation={addNavigationHelpers(helpers)} />
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
+const mapStateToProps = (state: any) => ({ navigation: state.navigation });
 
-AppRegistry.registerComponent('MarginCalculator', () => MarginCalculator);
+const AppWithNavigationState = connect(mapStateToProps)(App);
+
+export default class Root extends React.Component {
+  public render() {
+    return (
+      <Provider store={store}>
+        <AppWithNavigationState />
+      </Provider>
+    );
+  }
+}
+
+AppRegistry.registerComponent("MarginCalculator", () => Root);
