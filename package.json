@@ -1,0 +1,40 @@
+{
+  "name": "MarginCalculator",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "clean": "gulp clean",
+    "distclean": "gulp distclean",
+    "tsc": "gulp tsc",
+    "tsc:w": "gulp tsc:w",
+    "lint": "gulp lint",
+    "android": "gulp android",
+    "release": "gulp release",
+    "start": "node node_modules/react-native/local-cli/cli.js start"
+  },
+  "dependencies": {
+    "react": "16.0.0-alpha.12",
+    "react-native": "0.47.1",
+    "react-navigation": "^1.0.0-beta.11",
+    "react-redux": "^5.0.6",
+    "redux": "^3.7.2",
+    "redux-actions": "^2.2.1",
+    "redux-logger": "^3.0.6"
+  },
+  "devDependencies": {
+    "@types/react": "^16.0.2",
+    "@types/react-native": "^0.47.5",
+    "@types/react-navigation": "^1.0.19",
+    "@types/react-redux": "^5.0.4",
+    "@types/redux-actions": "^1.2.8",
+    "@types/redux-logger": "^3.0.0",
+    "babel-jest": "20.0.3",
+    "babel-preset-react-native": "3.0.0",
+    "del": "^3.0.0",
+    "gulp": "^3.9.1",
+    "gulp-util": "^3.0.8",
+    "tslint": "^5.6.0",
+    "tslint-react": "^3.2.0",
+    "typescript": "^2.4.2"
+  }
+}
