@@ -1,18 +1,22 @@
 import * as React from "react";
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
-import { IMarginCalculator, IUpdate } from "../store";
+import { View, Text, TextInput, Picker, Button, StyleSheet } from "react-native";
+import { IMarginCalculator, IUpdate, IUpdateCurrency, ICurrencyRates } from "../store";
 
 export interface IPropsState {
   marginCalculator: IMarginCalculator;
+  currencyRates: ICurrencyRates;
 }
 
 export interface IPropsDispatch {
   reset: () => void;
   recalculate: () => void;
   updateCostPrice: (payload: IUpdate) => void;
+  updateCostPriceCurrency: (payload: IUpdateCurrency) => void;
   updateSalePrice: (payload: IUpdate) => void;
+  updateSalePriceCurrency: (payload: IUpdateCurrency) => void;
   updateMargin: (payload: IUpdate) => void;
   updateMarkup: (payload: IUpdate) => void;
+  ratesRequest: () => void;
 }
 
 export interface IProps extends IPropsState, IPropsDispatch { }
@@ -26,6 +30,11 @@ export class Form extends React.Component<IProps> {
     },
   };
 
+  public constructor(props: IProps) {
+    super(props);
+    this.props.ratesRequest();
+  }
+
   public render() {
 
     const onReset = this.props.reset.bind(this);
@@ -34,14 +43,26 @@ export class Form extends React.Component<IProps> {
     const onCostPriceChanged = this.onCostPriceChanged.bind(this);
     const costPrice = this.props.marginCalculator.displayCostPrice;
 
+    const onCostPriceCurrencyChanged = this.onCostPriceCurrencyChanged.bind(this);
+    const costPriceCurrency = this.props.marginCalculator.displayCostPriceCurrency;
+
     const onSalePriceChanged = this.onSalePriceChanged.bind(this);
     const salePrice = this.props.marginCalculator.displaySalePrice;
+
+    const onSalePriceCurrencyChanged = this.onSalePriceCurrencyChanged.bind(this);
+    const salePriceCurrency = this.props.marginCalculator.displaySalePriceCurrency;
 
     const onMarginChanged = this.onMarginChanged.bind(this);
     const margin = this.props.marginCalculator.displayMargin;
 
     const onMarkupChanged = this.onMarkupChanged.bind(this);
     const markup = this.props.marginCalculator.displayMarkup;
+
+    const currencyLabels = [this.props.currencyRates.base].concat(Object.keys(this.props.currencyRates.rates));
+    const currencyItems = [];
+    for (const rate of currencyLabels) {
+      currencyItems.push(<Picker.Item label={rate} value={rate} key={rate} />);
+    }
 
     return (
       <View style={styles.container}>
@@ -62,6 +83,16 @@ export class Form extends React.Component<IProps> {
         </View>
 
         <View style={styles.inputContainer}>
+          <Picker
+            style={styles.inputPicker}
+            selectedValue={costPriceCurrency}
+            onValueChange={onCostPriceCurrencyChanged}
+          >
+            {currencyItems}
+          </Picker>
+        </View>
+
+        <View style={styles.inputContainer}>
           <View style={styles.inputTextContainer}>
             <Text style={styles.textLabel}>
               Sale Price
@@ -74,6 +105,16 @@ export class Form extends React.Component<IProps> {
             onEndEditing={onRecalculate}
             value={salePrice}
           />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Picker
+            style={styles.inputPicker}
+            selectedValue={salePriceCurrency}
+            onValueChange={onSalePriceCurrencyChanged}
+          >
+            {currencyItems}
+          </Picker>
         </View>
 
         <View style={styles.inputContainer}>
@@ -119,8 +160,18 @@ export class Form extends React.Component<IProps> {
     this.props.updateCostPrice({ value });
   }
 
+  protected onCostPriceCurrencyChanged(label: string): void {
+    const value = (label === this.props.currencyRates.base) ? 1 : this.props.currencyRates.rates[label];
+    this.props.updateCostPriceCurrency({ label, value });
+  }
+
   protected onSalePriceChanged(value: string): void {
     this.props.updateSalePrice({ value });
+  }
+
+  protected onSalePriceCurrencyChanged(label: string): void {
+    const value = (label === this.props.currencyRates.base) ? 1 : this.props.currencyRates.rates[label];
+    this.props.updateSalePriceCurrency({ label, value });
   }
 
   protected onMarginChanged(value: string): void {
@@ -166,5 +217,8 @@ const styles = StyleSheet.create({
     borderColor: "#AFAFAF",
     borderTopRightRadius: 2,
     borderBottomRightRadius: 2,
+  },
+  inputPicker: {
+    width: 160,
   },
 });

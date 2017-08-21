@@ -19,7 +19,9 @@
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
     "redux-actions": "^2.2.1",
-    "redux-logger": "^3.0.6"
+    "redux-logger": "^3.0.6",
+    "redux-observable": "^0.16.0",
+    "rxjs": "^5.4.3"
   },
   "devDependencies": {
     "@types/react": "^16.0.2",

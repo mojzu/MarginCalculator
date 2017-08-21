@@ -2,8 +2,8 @@ import { connect, Dispatch } from "react-redux";
 import { IPropsState, IPropsDispatch, Form } from "../components/Form";
 import * as store from "../store";
 
-export function mapStateToProps({ marginCalculator }: store.IStoreState): IPropsState {
-  return { marginCalculator };
+export function mapStateToProps({ marginCalculator, currencyRates }: store.IStoreState): IPropsState {
+  return { marginCalculator, currencyRates };
 }
 
 export function mapDispatchToProps(dispatch: Dispatch<any>): IPropsDispatch {
@@ -11,9 +11,12 @@ export function mapDispatchToProps(dispatch: Dispatch<any>): IPropsDispatch {
     reset: () => dispatch(store.reset(undefined)),
     recalculate: () => dispatch(store.recalculate(undefined)),
     updateCostPrice: (payload: store.IUpdate) => dispatch(store.updateCostPrice(payload)),
+    updateCostPriceCurrency: (payload: store.IUpdateCurrency) => dispatch(store.updateCostPriceCurrency(payload)),
     updateSalePrice: (payload: store.IUpdate) => dispatch(store.updateSalePrice(payload)),
+    updateSalePriceCurrency: (payload: store.IUpdateCurrency) => dispatch(store.updateSalePriceCurrency(payload)),
     updateMargin: (payload: store.IUpdate) => dispatch(store.updateMargin(payload)),
     updateMarkup: (payload: store.IUpdate) => dispatch(store.updateMarkup(payload)),
+    ratesRequest: () => dispatch(store.ratesRequest(undefined)),
   };
 }
 
