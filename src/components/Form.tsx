@@ -34,38 +34,40 @@ export class Form extends React.Component<IProps> {
     // },
   };
 
+  protected handlers: any;
+
   public constructor(props: IProps) {
     super(props);
+
+    // Request updated currency rates.
     this.props.ratesRequest();
+
+    // Bind action handlers for templates.
+    this.handlers = {
+      onReset: this.props.reset.bind(this),
+      onRecalculate: this.props.recalculate.bind(this),
+      onCostPriceChanged: this.onCostPriceChanged.bind(this),
+      onCostPriceCurrencyChanged: this.onCostPriceCurrencyChanged.bind(this),
+      onCostPriceCurrencyValueChanged: this.onCostPriceCurrencyValueChanged.bind(this),
+      onSalePriceChanged: this.onSalePriceChanged.bind(this),
+      onSalePriceCurrencyChanged: this.onSalePriceCurrencyChanged.bind(this),
+      onSalePriceCurrencyValueChanged: this.onSalePriceCurrencyValueChanged.bind(this),
+      onMarginChanged: this.onMarginChanged.bind(this),
+      onMarkupChanged: this.onMarkupChanged.bind(this),
+    };
   }
 
   public render() {
 
-    const onReset = this.props.reset.bind(this);
-    const onRecalculate = this.props.recalculate.bind(this);
-
-    const onCostPriceChanged = this.onCostPriceChanged.bind(this);
     const costPrice = this.props.marginCalculator.displayCostPrice;
-
-    const onCostPriceCurrencyChanged = this.onCostPriceCurrencyChanged.bind(this);
     const costPriceCurrency = this.props.marginCalculator.displayCostPriceCurrency;
-
-    const onCostPriceCurrencyValueChanged = this.onCostPriceCurrencyValueChanged.bind(this);
     const costPriceCurrencyValue = this.props.marginCalculator.displayCostPriceCurrencyValue;
 
-    const onSalePriceChanged = this.onSalePriceChanged.bind(this);
     const salePrice = this.props.marginCalculator.displaySalePrice;
-
-    const onSalePriceCurrencyChanged = this.onSalePriceCurrencyChanged.bind(this);
     const salePriceCurrency = this.props.marginCalculator.displaySalePriceCurrency;
-
-    const onSalePriceCurrencyValueChanged = this.onSalePriceCurrencyValueChanged.bind(this);
     const salePriceCurrencyValue = this.props.marginCalculator.displaySalePriceCurrencyValue;
 
-    const onMarginChanged = this.onMarginChanged.bind(this);
     const margin = this.props.marginCalculator.displayMargin;
-
-    const onMarkupChanged = this.onMarkupChanged.bind(this);
     const markup = this.props.marginCalculator.displayMarkup;
 
     const currencyLabels = [this.props.currencyRates.base].concat(Object.keys(this.props.currencyRates.rates));
@@ -86,8 +88,8 @@ export class Form extends React.Component<IProps> {
           <TextInput
             style={styles.textInput}
             keyboardType="numeric"
-            onChangeText={onCostPriceChanged}
-            onEndEditing={onRecalculate}
+            onChangeText={this.handlers.onCostPriceChanged}
+            onEndEditing={this.handlers.onRecalculate}
             value={costPrice}
           />
         </View>
@@ -96,15 +98,15 @@ export class Form extends React.Component<IProps> {
           <Picker
             style={styles.inputPicker}
             selectedValue={costPriceCurrency}
-            onValueChange={onCostPriceCurrencyChanged}
+            onValueChange={this.handlers.onCostPriceCurrencyChanged}
           >
             {currencyItems}
           </Picker>
           <TextInput
             style={styles.textInput}
             keyboardType="numeric"
-            onChangeText={onCostPriceCurrencyValueChanged}
-            onEndEditing={onRecalculate}
+            onChangeText={this.handlers.onCostPriceCurrencyValueChanged}
+            onEndEditing={this.handlers.onRecalculate}
             value={costPriceCurrencyValue}
           />
         </View>
@@ -118,8 +120,8 @@ export class Form extends React.Component<IProps> {
           <TextInput
             style={styles.textInput}
             keyboardType="numeric"
-            onChangeText={onSalePriceChanged}
-            onEndEditing={onRecalculate}
+            onChangeText={this.handlers.onSalePriceChanged}
+            onEndEditing={this.handlers.onRecalculate}
             value={salePrice}
           />
         </View>
@@ -128,15 +130,15 @@ export class Form extends React.Component<IProps> {
           <Picker
             style={styles.inputPicker}
             selectedValue={salePriceCurrency}
-            onValueChange={onSalePriceCurrencyChanged}
+            onValueChange={this.handlers.onSalePriceCurrencyChanged}
           >
             {currencyItems}
           </Picker>
           <TextInput
             style={styles.textInput}
             keyboardType="numeric"
-            onChangeText={onSalePriceCurrencyValueChanged}
-            onEndEditing={onRecalculate}
+            onChangeText={this.handlers.onSalePriceCurrencyValueChanged}
+            onEndEditing={this.handlers.onRecalculate}
             value={salePriceCurrencyValue}
           />
         </View>
@@ -150,8 +152,8 @@ export class Form extends React.Component<IProps> {
           <TextInput
             style={styles.textInput}
             keyboardType="numeric"
-            onChangeText={onMarginChanged}
-            onEndEditing={onRecalculate}
+            onChangeText={this.handlers.onMarginChanged}
+            onEndEditing={this.handlers.onRecalculate}
             value={margin}
           />
         </View>
@@ -165,14 +167,14 @@ export class Form extends React.Component<IProps> {
           <TextInput
             style={styles.textInput}
             keyboardType="numeric"
-            onChangeText={onMarkupChanged}
-            onEndEditing={onRecalculate}
+            onChangeText={this.handlers.onMarkupChanged}
+            onEndEditing={this.handlers.onRecalculate}
             value={markup}
           />
         </View>
 
         <Button
-          onPress={onReset}
+          onPress={this.handlers.onReset}
           title="Reset"
         />
 
