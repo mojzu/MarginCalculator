@@ -28,10 +28,10 @@ export class Form extends React.Component<IProps> {
 
   public static navigationOptions = {
     title: "Margin Calculator",
-    // TODO: Style improvements.
-    // headerStyle: {
-    //   backgroundColor: "skyblue",
-    // },
+    headerTintColor: "#e8eaf6",
+    headerStyle: {
+      backgroundColor: "#3f51b5",
+    },
   };
 
   protected handlers: any;
@@ -79,14 +79,14 @@ export class Form extends React.Component<IProps> {
     return (
       <View style={styles.container}>
 
-        <View style={styles.inputContainer}>
+        <View style={styles.rowContainerEven}>
           <View style={styles.inputTextContainer}>
-            <Text style={styles.textLabel}>
+            <Text style={styles.inputText}>
               Cost Price
             </Text>
           </View>
           <TextInput
-            style={styles.textInput}
+            style={styles.inputTextInput}
             keyboardType="numeric"
             onChangeText={this.handlers.onCostPriceChanged}
             onEndEditing={this.handlers.onRecalculate}
@@ -94,16 +94,16 @@ export class Form extends React.Component<IProps> {
           />
         </View>
 
-        <View style={styles.inputContainer}>
+        <View style={styles.rowContainerOdd}>
           <Picker
-            style={styles.inputPicker}
+            style={styles.picker}
             selectedValue={costPriceCurrency}
             onValueChange={this.handlers.onCostPriceCurrencyChanged}
           >
             {currencyItems}
           </Picker>
           <TextInput
-            style={styles.textInput}
+            style={styles.pickerTextInput}
             keyboardType="numeric"
             onChangeText={this.handlers.onCostPriceCurrencyValueChanged}
             onEndEditing={this.handlers.onRecalculate}
@@ -111,14 +111,14 @@ export class Form extends React.Component<IProps> {
           />
         </View>
 
-        <View style={styles.inputContainer}>
+        <View style={styles.rowContainerEven}>
           <View style={styles.inputTextContainer}>
-            <Text style={styles.textLabel}>
+            <Text style={styles.inputText}>
               Sale Price
             </Text>
           </View>
           <TextInput
-            style={styles.textInput}
+            style={styles.inputTextInput}
             keyboardType="numeric"
             onChangeText={this.handlers.onSalePriceChanged}
             onEndEditing={this.handlers.onRecalculate}
@@ -126,16 +126,16 @@ export class Form extends React.Component<IProps> {
           />
         </View>
 
-        <View style={styles.inputContainer}>
+        <View style={styles.rowContainerOdd}>
           <Picker
-            style={styles.inputPicker}
+            style={styles.picker}
             selectedValue={salePriceCurrency}
             onValueChange={this.handlers.onSalePriceCurrencyChanged}
           >
             {currencyItems}
           </Picker>
           <TextInput
-            style={styles.textInput}
+            style={styles.pickerTextInput}
             keyboardType="numeric"
             onChangeText={this.handlers.onSalePriceCurrencyValueChanged}
             onEndEditing={this.handlers.onRecalculate}
@@ -143,14 +143,14 @@ export class Form extends React.Component<IProps> {
           />
         </View>
 
-        <View style={styles.inputContainer}>
+        <View style={styles.rowContainerEven}>
           <View style={styles.inputTextContainer}>
-            <Text style={styles.textLabel}>
+            <Text style={styles.inputText}>
               Margin (%)
             </Text>
           </View>
           <TextInput
-            style={styles.textInput}
+            style={styles.inputTextInput}
             keyboardType="numeric"
             onChangeText={this.handlers.onMarginChanged}
             onEndEditing={this.handlers.onRecalculate}
@@ -158,14 +158,14 @@ export class Form extends React.Component<IProps> {
           />
         </View>
 
-        <View style={styles.inputContainer}>
+        <View style={styles.rowContainerOdd}>
           <View style={styles.inputTextContainer}>
-            <Text style={styles.textLabel}>
+            <Text style={styles.inputText}>
               Markup (%)
             </Text>
           </View>
           <TextInput
-            style={styles.textInput}
+            style={styles.inputTextInput}
             keyboardType="numeric"
             onChangeText={this.handlers.onMarkupChanged}
             onEndEditing={this.handlers.onRecalculate}
@@ -176,6 +176,7 @@ export class Form extends React.Component<IProps> {
         <Button
           onPress={this.handlers.onReset}
           title="Reset"
+          color="#5c6bc0"
         />
 
       </View>
@@ -224,35 +225,41 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  inputContainer: {
+  rowContainerEven: {
+    flex: 1,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 10,
+    backgroundColor: "#e8eaf6",
   },
+  rowContainerOdd: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#c5cae9",
+  },
+  // Value input styles.
   inputTextContainer: {
     flex: 0.25,
-    height: 40,
-    borderWidth: 1,
-    borderColor: "#AFAFAF",
-    borderTopLeftRadius: 2,
-    borderBottomLeftRadius: 2,
+    height: 50,
     justifyContent: "center",
     alignItems: "center",
   },
-  textLabel: {
+  inputText: {
     fontWeight: "bold",
   },
-  textInput: {
+  inputTextInput: {
     flex: 0.45,
-    height: 40,
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderColor: "#AFAFAF",
-    borderTopRightRadius: 2,
-    borderBottomRightRadius: 2,
+    height: 50,
   },
-  inputPicker: {
-    width: 160,
+  // Picker input styles.
+  picker: {
+    flex: 0.45,
+    height: 50,
+  },
+  pickerTextInput: {
+    flex: 0.25,
+    height: 50,
   },
 });
