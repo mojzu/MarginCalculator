@@ -1,11 +1,4 @@
-import { combineReducers, compose, applyMiddleware, createStore } from "redux";
 import { createAction, handleActions } from "redux-actions";
-import { ActionsObservable, combineEpics, createEpicMiddleware } from "redux-observable";
-import { createLogger } from "redux-logger";
-import * as Rx from "rxjs";
-import { navigationReducer } from "./navigation";
-
-// Start margin state.
 
 export interface IMarginCalculator {
   displayCostPrice: string;
@@ -25,7 +18,7 @@ export interface IMarginCalculator {
   lastUpdate: string;
 }
 
-const marginCalculatorDefaultState: IMarginCalculator = {
+const defaultState: IMarginCalculator = {
   displayCostPrice: "",
   displayCostPriceCurrency: "GBP",
   displayCostPriceCurrencyValue: "1.0000",
@@ -43,35 +36,35 @@ const marginCalculatorDefaultState: IMarginCalculator = {
   lastUpdate: "",
 };
 
-export const RESET = "MarginCalculator/Reset";
-export type RESET = typeof RESET;
+const RESET = "MarginCalculator/Reset";
+type RESET = typeof RESET;
 
-export const RECALCULATE = "MarginCalculator/Recalculate";
-export type RECALCULATE = typeof RESET;
+const RECALCULATE = "MarginCalculator/Recalculate";
+type RECALCULATE = typeof RESET;
 
-export const UPDATE_COST_PRICE = "MarginCalculator/UpdateCostPrice";
-export type UPDATE_COST_PRICE = typeof UPDATE_COST_PRICE;
+const UPDATE_COST_PRICE = "MarginCalculator/UpdateCostPrice";
+type UPDATE_COST_PRICE = typeof UPDATE_COST_PRICE;
 
-export const UPDATE_COST_PRICE_CURRENCY = "MarginCalculator/UpdateCostPriceCurrency";
-export type UPDATE_COST_PRICE_CURRENCY = typeof UPDATE_COST_PRICE_CURRENCY;
+const UPDATE_COST_PRICE_CURRENCY = "MarginCalculator/UpdateCostPriceCurrency";
+type UPDATE_COST_PRICE_CURRENCY = typeof UPDATE_COST_PRICE_CURRENCY;
 
-export const UPDATE_COST_PRICE_CURRENCY_VALUE = "MarginCalculator/UpdateCostPriceCurrencyValue";
-export type UPDATE_COST_PRICE_CURRENCY_VALUE = typeof UPDATE_COST_PRICE_CURRENCY_VALUE;
+const UPDATE_COST_PRICE_CURRENCY_VALUE = "MarginCalculator/UpdateCostPriceCurrencyValue";
+type UPDATE_COST_PRICE_CURRENCY_VALUE = typeof UPDATE_COST_PRICE_CURRENCY_VALUE;
 
-export const UPDATE_SALE_PRICE = "MarginCalculator/UpdateSalePrice";
-export type UPDATE_SALE_PRICE = typeof UPDATE_SALE_PRICE;
+const UPDATE_SALE_PRICE = "MarginCalculator/UpdateSalePrice";
+type UPDATE_SALE_PRICE = typeof UPDATE_SALE_PRICE;
 
-export const UPDATE_SALE_PRICE_CURRENCY = "MarginCalculator/UpdateSalePriceCurrency";
-export type UPDATE_SALE_PRICE_CURRENCY = typeof UPDATE_SALE_PRICE_CURRENCY;
+const UPDATE_SALE_PRICE_CURRENCY = "MarginCalculator/UpdateSalePriceCurrency";
+type UPDATE_SALE_PRICE_CURRENCY = typeof UPDATE_SALE_PRICE_CURRENCY;
 
-export const UPDATE_SALE_PRICE_CURRENCY_VALUE = "MarginCalculator/UpdateSalePriceCurrencyValue";
-export type UPDATE_SALE_PRICE_CURRENCY_VALUE = typeof UPDATE_SALE_PRICE_CURRENCY_VALUE;
+const UPDATE_SALE_PRICE_CURRENCY_VALUE = "MarginCalculator/UpdateSalePriceCurrencyValue";
+type UPDATE_SALE_PRICE_CURRENCY_VALUE = typeof UPDATE_SALE_PRICE_CURRENCY_VALUE;
 
-export const UPDATE_MARGIN = "MarginCalculator/UpdateMargin";
-export type UPDATE_MARGIN = typeof UPDATE_MARGIN;
+const UPDATE_MARGIN = "MarginCalculator/UpdateMargin";
+type UPDATE_MARGIN = typeof UPDATE_MARGIN;
 
-export const UPDATE_MARKUP = "MarginCalculator/UpdateMarkup";
-export type UPDATE_MARKUP = typeof UPDATE_MARKUP;
+const UPDATE_MARKUP = "MarginCalculator/UpdateMarkup";
+type UPDATE_MARKUP = typeof UPDATE_MARKUP;
 
 export interface IUpdate {
   value: string;
@@ -245,9 +238,9 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
   return newState;
 }
 
-export const marginCalculatorReducer = handleActions<IMarginCalculator, any>({
+export const reducer = handleActions<IMarginCalculator, any>({
   [RESET]: (state, action) => {
-    return marginCalculatorDefaultState;
+    return defaultState;
   },
   [RECALCULATE]: (state, action) => {
     return recalculateState(state);
@@ -336,98 +329,4 @@ export const marginCalculatorReducer = handleActions<IMarginCalculator, any>({
     }
     return state;
   },
-}, marginCalculatorDefaultState);
-
-// End margin state.
-
-// Start currency state.
-
-export interface ICurrencyRates {
-  base: string;
-  date: string;
-  rates: {
-    [key: string]: number;
-  };
-}
-
-const currencyRatesDefaultState: ICurrencyRates = {
-  base: "GBP",
-  date: "2017-08-22",
-  rates: {},
-};
-
-export const RATES_REQUEST = "CurrencyRates/RatesRequest";
-export type RATES_REQUEST = typeof RATES_REQUEST;
-
-export const RATES_RESPONSE = "CurrencyRates/RatesResponse";
-export type RATES_RESPONSE = typeof RATES_RESPONSE;
-
-export const ratesRequest = createAction<void>(RATES_REQUEST);
-export const ratesResponse = createAction<ICurrencyRates>(RATES_RESPONSE);
-
-export const currencyRatesReducer = handleActions<ICurrencyRates>({
-  [RATES_REQUEST]: (state, action) => {
-    return state;
-  },
-  [RATES_RESPONSE]: (state, action) => {
-    if (!!action.payload) {
-      return action.payload;
-    }
-    return state;
-  },
-}, currencyRatesDefaultState);
-
-export const ratesRequestEpic = (action$: ActionsObservable<any>) => {
-  return action$.ofType(RATES_REQUEST)
-    .mergeMap((action) => {
-      const fetchPromise = fetch("http://api.fixer.io/latest?base=GBP", {
-        method: "GET",
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-        },
-      });
-      return Rx.Observable.fromPromise(fetchPromise);
-    })
-    .mergeMap((response) => {
-      if (response.ok && (response.status === 200)) {
-        return Rx.Observable.fromPromise<ICurrencyRates>(response.json());
-      }
-      return Rx.Observable.of(currencyRatesDefaultState);
-    })
-    .map((data) => {
-      return ratesResponse(data);
-    });
-};
-
-export const currencyRatesEpic = combineEpics(
-  ratesRequestEpic,
-);
-
-// End currency state.
-
-export interface IStoreState {
-  navigation: any;
-  marginCalculator: IMarginCalculator;
-  currencyRates: ICurrencyRates;
-}
-
-const loggerMiddleware = createLogger({ predicate: (getState, action) => __DEV__ });
-
-export function configureStore(initialState?: IStoreState) {
-  const reducer = combineReducers({
-    navigation: navigationReducer,
-    marginCalculator: marginCalculatorReducer,
-    currencyRates: currencyRatesReducer,
-  });
-  const epicMiddleware = createEpicMiddleware(currencyRatesEpic);
-  const enhancer = compose(
-    applyMiddleware(epicMiddleware),
-    applyMiddleware(loggerMiddleware),
-  );
-  if (initialState != null) {
-    return createStore(reducer, initialState, enhancer);
-  } else {
-    return createStore(reducer, enhancer);
-  }
-}
+}, defaultState);

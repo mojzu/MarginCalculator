@@ -1,24 +1,39 @@
 import { connect, Dispatch } from "react-redux";
 import { IPropsState, IPropsDispatch, Form } from "../components/Form";
-import * as store from "../store";
+import { IStoreState } from "../store";
+import { ratesRequest } from "../store/currencyRates";
+import {
+  IUpdate,
+  IUpdateCurrency,
+  reset,
+  recalculate,
+  updateCostPrice,
+  updateCostPriceCurrency,
+  updateCostPriceCurrencyValue,
+  updateSalePrice,
+  updateSalePriceCurrency,
+  updateSalePriceCurrencyValue,
+  updateMargin,
+  updateMarkup,
+} from "../store/marginCalculator";
 
-export function mapStateToProps({ marginCalculator, currencyRates }: store.IStoreState): IPropsState {
-  return { marginCalculator, currencyRates };
+export function mapStateToProps({ currencyRates, marginCalculator }: IStoreState): IPropsState {
+  return { currencyRates, marginCalculator };
 }
 
 export function mapDispatchToProps(dispatch: Dispatch<any>): IPropsDispatch {
   return {
-    reset: () => dispatch(store.reset(undefined)),
-    recalculate: () => dispatch(store.recalculate(undefined)),
-    updateCostPrice: (payload: store.IUpdate) => dispatch(store.updateCostPrice(payload)),
-    updateCostPriceCurrency: (payload: store.IUpdateCurrency) => dispatch(store.updateCostPriceCurrency(payload)),
-    updateCostPriceCurrencyValue: (payload: store.IUpdate) => dispatch(store.updateCostPriceCurrencyValue(payload)),
-    updateSalePrice: (payload: store.IUpdate) => dispatch(store.updateSalePrice(payload)),
-    updateSalePriceCurrency: (payload: store.IUpdateCurrency) => dispatch(store.updateSalePriceCurrency(payload)),
-    updateSalePriceCurrencyValue: (payload: store.IUpdate) => dispatch(store.updateSalePriceCurrencyValue(payload)),
-    updateMargin: (payload: store.IUpdate) => dispatch(store.updateMargin(payload)),
-    updateMarkup: (payload: store.IUpdate) => dispatch(store.updateMarkup(payload)),
-    ratesRequest: () => dispatch(store.ratesRequest(undefined)),
+    ratesRequest: () => dispatch(ratesRequest(undefined)),
+    reset: () => dispatch(reset(undefined)),
+    recalculate: () => dispatch(recalculate(undefined)),
+    updateCostPrice: (payload: IUpdate) => dispatch(updateCostPrice(payload)),
+    updateCostPriceCurrency: (payload: IUpdateCurrency) => dispatch(updateCostPriceCurrency(payload)),
+    updateCostPriceCurrencyValue: (payload: IUpdate) => dispatch(updateCostPriceCurrencyValue(payload)),
+    updateSalePrice: (payload: IUpdate) => dispatch(updateSalePrice(payload)),
+    updateSalePriceCurrency: (payload: IUpdateCurrency) => dispatch(updateSalePriceCurrency(payload)),
+    updateSalePriceCurrencyValue: (payload: IUpdate) => dispatch(updateSalePriceCurrencyValue(payload)),
+    updateMargin: (payload: IUpdate) => dispatch(updateMargin(payload)),
+    updateMarkup: (payload: IUpdate) => dispatch(updateMarkup(payload)),
   };
 }
 

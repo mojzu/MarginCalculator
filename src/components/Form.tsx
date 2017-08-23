@@ -1,13 +1,15 @@
 import * as React from "react";
 import { View, Text, TextInput, Picker, Button, StyleSheet } from "react-native";
-import { IMarginCalculator, IUpdate, IUpdateCurrency, ICurrencyRates } from "../store";
+import { ICurrencyRates } from "../store/currencyRates";
+import { IMarginCalculator, IUpdate, IUpdateCurrency } from "../store/marginCalculator";
 
 export interface IPropsState {
-  marginCalculator: IMarginCalculator;
   currencyRates: ICurrencyRates;
+  marginCalculator: IMarginCalculator;
 }
 
 export interface IPropsDispatch {
+  ratesRequest: () => void;
   reset: () => void;
   recalculate: () => void;
   updateCostPrice: (payload: IUpdate) => void;
@@ -18,7 +20,6 @@ export interface IPropsDispatch {
   updateSalePriceCurrencyValue: (payload: IUpdate) => void;
   updateMargin: (payload: IUpdate) => void;
   updateMarkup: (payload: IUpdate) => void;
-  ratesRequest: () => void;
 }
 
 export interface IProps extends IPropsState, IPropsDispatch { }
