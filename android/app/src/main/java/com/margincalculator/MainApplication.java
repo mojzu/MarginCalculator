@@ -1,4 +1,4 @@
-package com.margincalculator;
+package com.mojzunet.margincalculator;
 
 import android.app.Application;
 
