@@ -1,10 +1,11 @@
 import * as React from "react";
 import { Provider } from "react-redux";
-import { AppRegistry } from "react-native";
+import { AppRegistry, View, StatusBar } from "react-native";
 import { addNavigationHelpers } from "react-navigation";
 import { connect } from "react-redux";
 import { configureStore } from "./store";
 import { AppNavigator } from "./navigation";
+import { colours, styles } from "./style";
 
 const store = configureStore();
 
@@ -18,7 +19,10 @@ class App extends React.Component<{
       state: this.props.navigation,
     };
     return (
-      <AppNavigator navigation={addNavigationHelpers(helpers)} />
+      <View style={styles.container}>
+        <StatusBar backgroundColor={colours.statusBar} />
+        <AppNavigator navigation={addNavigationHelpers(helpers)} />
+      </View>
     );
   }
 }

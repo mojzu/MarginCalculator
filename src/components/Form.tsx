@@ -2,6 +2,7 @@ import * as React from "react";
 import { View, Text, TextInput, Picker, Button, StyleSheet } from "react-native";
 import { ICurrencyRates } from "../store/currencyRates";
 import { IMarginCalculator, IUpdate, IUpdateCurrency } from "../store/marginCalculator";
+import { colours } from "../style";
 
 export interface IPropsState {
   currencyRates: ICurrencyRates;
@@ -28,9 +29,9 @@ export class Form extends React.Component<IProps> {
 
   public static navigationOptions = {
     title: "Margin Calculator",
-    headerTintColor: "#e8eaf6",
+    headerTintColor: colours.headerTintColour,
     headerStyle: {
-      backgroundColor: "#3f51b5",
+      backgroundColor: colours.headerBackgroundColour,
     },
   };
 
