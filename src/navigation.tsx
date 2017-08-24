@@ -1,16 +1,16 @@
 import { StackNavigator } from "react-navigation";
-import Form from "./containers/Form";
+import MarginForm from "./containers/MarginForm";
 
 export const ROUTES = {
-  FORM: "Form",
+  MARGIN_FORM: "MarginForm",
 };
 
 export const AppNavigator = StackNavigator({
-  [ROUTES.FORM]: { screen: Form },
+  [ROUTES.MARGIN_FORM]: { screen: MarginForm },
 });
 
 const initialState = AppNavigator.router.getStateForAction(
-  AppNavigator.router.getActionForPathAndParams(ROUTES.FORM), null);
+  AppNavigator.router.getActionForPathAndParams(ROUTES.MARGIN_FORM), null);
 
 export const navigationReducer = (state = initialState, action: any) => {
   const nextState = AppNavigator.router.getStateForAction(action, state);

@@ -11,8 +11,6 @@ export interface IPropsState {
   marginCalculator: IMarginCalculator;
 }
 
-// TODO: IMRPOVE STYLES, SPLIT COMPONENTS, RELEASE
-
 export interface IPropsDispatch {
   ratesRequest: () => void;
   reset: () => void;
@@ -29,7 +27,7 @@ export interface IPropsDispatch {
 
 export interface IProps extends IPropsState, IPropsDispatch { }
 
-export class Form extends React.Component<IProps> {
+export class MarginForm extends React.Component<IProps> {
 
   public static navigationOptions = {
     title: "Margin Calculator",
@@ -172,7 +170,7 @@ export class Form extends React.Component<IProps> {
 
 }
 
-export default Form;
+export default MarginForm;
 
 const styles = StyleSheet.create({
   buttonContainer: {

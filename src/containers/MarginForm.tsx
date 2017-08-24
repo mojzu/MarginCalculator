@@ -1,5 +1,5 @@
 import { connect, Dispatch } from "react-redux";
-import { IPropsState, IPropsDispatch, Form } from "../components/Form";
+import { IPropsState, IPropsDispatch, MarginForm } from "../components/MarginForm";
 import { IStoreState } from "../store";
 import { ratesRequest } from "../store/currencyRates";
 import {
@@ -37,4 +37,4 @@ export function mapDispatchToProps(dispatch: Dispatch<any>): IPropsDispatch {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Form);
+export default connect(mapStateToProps, mapDispatchToProps)(MarginForm);
