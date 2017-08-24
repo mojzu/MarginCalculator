@@ -1,5 +1,13 @@
 # MarginCalculator
 
+Margin and markup calculator with currency conversion.
+
+## Built With
+
+-   [React Native](https://facebook.github.io/react-native/)
+-   [Redux](http://redux.js.org/docs/introduction/)
+-   [Fixer.io](http://fixer.io/)
+
 ## Developer
 
 Clone repository, install dependencies with `yarn install` and run scripts: `yarn run ...`
@@ -13,7 +21,7 @@ Clone repository, install dependencies with `yarn install` and run scripts: `yar
 | `android`   | Run application on Android virtual device.                   |
 | `release`   | Build Android release `APK` file.                            |
 
-For live reload during development run the following commands in separate terminals.
+For live reload during development run the following commands.
 
 ```Shell
 $ yarn run tsc:w
