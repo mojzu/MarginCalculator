@@ -1,13 +1,17 @@
 import * as React from "react";
-import { View, Text, TextInput, Picker, Button, StyleSheet } from "react-native";
+import { ScrollView, View, Button, StyleSheet } from "react-native";
 import { ICurrencyRates } from "../store/currencyRates";
 import { IMarginCalculator, IUpdate, IUpdateCurrency } from "../store/marginCalculator";
 import { colours } from "../style";
+import { MarginInput } from "./MarginInput";
+import { CurrencyInput } from "./CurrencyInput";
 
 export interface IPropsState {
   currencyRates: ICurrencyRates;
   marginCalculator: IMarginCalculator;
 }
+
+// TODO: IMRPOVE STYLES, SPLIT COMPONENTS, RELEASE
 
 export interface IPropsDispatch {
   ratesRequest: () => void;
@@ -71,116 +75,64 @@ export class Form extends React.Component<IProps> {
     const margin = this.props.marginCalculator.displayMargin;
     const markup = this.props.marginCalculator.displayMarkup;
 
-    const currencyLabels = [this.props.currencyRates.base].concat(Object.keys(this.props.currencyRates.rates));
-    const currencyItems = [];
-    for (const rate of currencyLabels) {
-      currencyItems.push(<Picker.Item label={rate} value={rate} key={rate} />);
-    }
-
     return (
-      <View style={styles.container}>
+      <ScrollView>
 
-        <View style={styles.rowContainerEven}>
-          <View style={styles.inputTextContainer}>
-            <Text style={styles.inputText}>
-              Cost Price
-            </Text>
-          </View>
-          <TextInput
-            style={styles.inputTextInput}
-            keyboardType="numeric"
-            onChangeText={this.handlers.onCostPriceChanged}
-            onEndEditing={this.handlers.onRecalculate}
-            value={costPrice}
-          />
-        </View>
-
-        <View style={styles.rowContainerOdd}>
-          <Picker
-            style={styles.picker}
-            selectedValue={costPriceCurrency}
-            onValueChange={this.handlers.onCostPriceCurrencyChanged}
-          >
-            {currencyItems}
-          </Picker>
-          <TextInput
-            style={styles.pickerTextInput}
-            keyboardType="numeric"
-            onChangeText={this.handlers.onCostPriceCurrencyValueChanged}
-            onEndEditing={this.handlers.onRecalculate}
-            value={costPriceCurrencyValue}
-          />
-        </View>
-
-        <View style={styles.rowContainerEven}>
-          <View style={styles.inputTextContainer}>
-            <Text style={styles.inputText}>
-              Sale Price
-            </Text>
-          </View>
-          <TextInput
-            style={styles.inputTextInput}
-            keyboardType="numeric"
-            onChangeText={this.handlers.onSalePriceChanged}
-            onEndEditing={this.handlers.onRecalculate}
-            value={salePrice}
-          />
-        </View>
-
-        <View style={styles.rowContainerOdd}>
-          <Picker
-            style={styles.picker}
-            selectedValue={salePriceCurrency}
-            onValueChange={this.handlers.onSalePriceCurrencyChanged}
-          >
-            {currencyItems}
-          </Picker>
-          <TextInput
-            style={styles.pickerTextInput}
-            keyboardType="numeric"
-            onChangeText={this.handlers.onSalePriceCurrencyValueChanged}
-            onEndEditing={this.handlers.onRecalculate}
-            value={salePriceCurrencyValue}
-          />
-        </View>
-
-        <View style={styles.rowContainerEven}>
-          <View style={styles.inputTextContainer}>
-            <Text style={styles.inputText}>
-              Margin (%)
-            </Text>
-          </View>
-          <TextInput
-            style={styles.inputTextInput}
-            keyboardType="numeric"
-            onChangeText={this.handlers.onMarginChanged}
-            onEndEditing={this.handlers.onRecalculate}
-            value={margin}
-          />
-        </View>
-
-        <View style={styles.rowContainerOdd}>
-          <View style={styles.inputTextContainer}>
-            <Text style={styles.inputText}>
-              Markup (%)
-            </Text>
-          </View>
-          <TextInput
-            style={styles.inputTextInput}
-            keyboardType="numeric"
-            onChangeText={this.handlers.onMarkupChanged}
-            onEndEditing={this.handlers.onRecalculate}
-            value={markup}
-          />
-        </View>
-
-        <Button
-          onPress={this.handlers.onReset}
-          title="Reset"
-          color="#5c6bc0"
+        <MarginInput
+          text="Cost Price"
+          value={costPrice}
+          onChangeText={this.handlers.onCostPriceChanged}
+          onEndEditing={this.handlers.onRecalculate}
         />
 
-      </View>
+        <CurrencyInput
+          currencyRates={this.props.currencyRates}
+          selectedValue={costPriceCurrency}
+          value={costPriceCurrencyValue}
+          onValueChange={this.handlers.onCostPriceCurrencyChanged}
+          onChangeText={this.handlers.onCostPriceCurrencyValueChanged}
+          onEndEditing={this.handlers.onRecalculate}
+        />
+
+        <MarginInput
+          text="Sale Price"
+          value={salePrice}
+          onChangeText={this.handlers.onSalePriceChanged}
+          onEndEditing={this.handlers.onRecalculate}
+        />
+
+        <CurrencyInput
+          currencyRates={this.props.currencyRates}
+          selectedValue={salePriceCurrency}
+          value={salePriceCurrencyValue}
+          onValueChange={this.handlers.onSalePriceCurrencyChanged}
+          onChangeText={this.handlers.onSalePriceCurrencyValueChanged}
+          onEndEditing={this.handlers.onRecalculate}
+        />
+
+        <MarginInput
+          text="Margin (%)"
+          value={margin}
+          onChangeText={this.handlers.onMarginChanged}
+          onEndEditing={this.handlers.onRecalculate}
+        />
+
+        <MarginInput
+          text="Markup (%)"
+          value={markup}
+          onChangeText={this.handlers.onMarkupChanged}
+          onEndEditing={this.handlers.onRecalculate}
+        />
+
+        <View style={styles.buttonContainer}>
+          <Button
+            onPress={this.handlers.onReset}
+            title="Reset"
+            color="#5c6bc0"
+          />
+        </View>
+
+      </ScrollView>
     );
   }
 
@@ -223,44 +175,7 @@ export class Form extends React.Component<IProps> {
 export default Form;
 
 const styles = StyleSheet.create({
-  container: {
+  buttonContainer: {
     flex: 1,
-  },
-  rowContainerEven: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#e8eaf6",
-  },
-  rowContainerOdd: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#c5cae9",
-  },
-  // Value input styles.
-  inputTextContainer: {
-    flex: 0.25,
-    height: 50,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  inputText: {
-    fontWeight: "bold",
-  },
-  inputTextInput: {
-    flex: 0.45,
-    height: 50,
-  },
-  // Picker input styles.
-  picker: {
-    flex: 0.45,
-    height: 50,
-  },
-  pickerTextInput: {
-    flex: 0.25,
-    height: 50,
   },
 });
