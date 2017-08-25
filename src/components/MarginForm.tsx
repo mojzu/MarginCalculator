@@ -2,7 +2,7 @@ import * as React from "react";
 import { ScrollView, View, Button, StyleSheet } from "react-native";
 import { ICurrencyRates } from "../store/currencyRates";
 import { IMarginCalculator, IUpdate, IUpdateCurrency } from "../store/marginCalculator";
-import { colours } from "../style";
+import { colours, styles } from "../style";
 import { MarginInput } from "./MarginInput";
 import { CurrencyInput } from "./CurrencyInput";
 
@@ -118,12 +118,14 @@ export class MarginForm extends React.Component<IProps> {
           onEndEditing={this.handlers.onRecalculate}
         />
 
-        <View style={styles.buttonContainer}>
-          <Button
-            onPress={this.handlers.onReset}
-            title="Reset"
-            color="#5c6bc0"
-          />
+        <View style={styles.marginFormResetButtonContainer}>
+          <View style={styles.marginFormResetButtonContainerInner}>
+            <Button
+              onPress={this.handlers.onReset}
+              title="Reset"
+              color={colours.marginFormResetButton}
+            />
+          </View>
         </View>
 
       </ScrollView>
@@ -167,9 +169,3 @@ export class MarginForm extends React.Component<IProps> {
 }
 
 export default MarginForm;
-
-const styles = StyleSheet.create({
-  buttonContainer: {
-    flex: 1,
-  },
-});

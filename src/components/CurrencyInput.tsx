@@ -23,13 +23,15 @@ export class CurrencyInput extends React.Component<IProps> {
 
     return (
       <View style={styles.currencyInputContainer}>
-        <Picker
-          style={styles.currencyInputPicker}
-          selectedValue={this.props.selectedValue}
-          onValueChange={this.props.onValueChange}
-        >
-          {items}
-        </Picker>
+        <View style={styles.currencyInputPickerContainer}>
+          <Picker
+            style={styles.currencyInputPicker}
+            selectedValue={this.props.selectedValue}
+            onValueChange={this.props.onValueChange}
+          >
+            {items}
+          </Picker>
+        </View>
         <TextInput
           style={styles.currencyInputTextInput}
           keyboardType="numeric"
