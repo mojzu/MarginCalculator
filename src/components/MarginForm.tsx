@@ -12,7 +12,6 @@ export interface IPropsState {
 }
 
 export interface IPropsDispatch {
-  ratesRequest: () => void;
   reset: () => void;
   recalculate: () => void;
   updateCostPrice: (payload: IUpdate) => void;
@@ -41,9 +40,6 @@ export class MarginForm extends React.Component<IProps> {
 
   public constructor(props: IProps) {
     super(props);
-
-    // Request updated currency rates.
-    this.props.ratesRequest();
 
     // Bind action handlers for templates.
     this.handlers = {

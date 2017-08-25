@@ -8,6 +8,7 @@ import { IMarginCalculator, reducer as marginCalculatorReducer } from "./marginC
 export interface IStoreState {
   currencyRates: ICurrencyRates;
   marginCalculator: IMarginCalculator;
+  navigation: any;
 }
 
 const loggerMiddleware = createLogger({ predicate: (getState, action) => __DEV__ });
