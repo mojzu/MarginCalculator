@@ -14,6 +14,7 @@ import {
   updateSalePriceCurrencyValue,
   updateMargin,
   updateMarkup,
+  updateDiscount,
 } from "../store/marginCalculator";
 
 function mapStateToProps({ currencyRates, marginCalculator }: IStoreState): IPropsState {
@@ -32,6 +33,7 @@ function mapDispatchToProps(dispatch: Dispatch<any>): IPropsDispatch {
     updateSalePriceCurrencyValue: (payload: IUpdate) => dispatch(updateSalePriceCurrencyValue(payload)),
     updateMargin: (payload: IUpdate) => dispatch(updateMargin(payload)),
     updateMarkup: (payload: IUpdate) => dispatch(updateMarkup(payload)),
+    updateDiscount: (payload: IUpdate) => dispatch(updateDiscount(payload)),
   };
 }
 

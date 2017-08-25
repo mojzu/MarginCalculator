@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ScrollView, View, Button, StyleSheet } from "react-native";
+import { ScrollView, View, Button } from "react-native";
 import { ICurrencyRates } from "../store/currencyRates";
 import { IMarginCalculator, IUpdate, IUpdateCurrency } from "../store/marginCalculator";
 import { colours, styles } from "../style";
@@ -22,6 +22,7 @@ export interface IPropsDispatch {
   updateSalePriceCurrencyValue: (payload: IUpdate) => void;
   updateMargin: (payload: IUpdate) => void;
   updateMarkup: (payload: IUpdate) => void;
+  updateDiscount: (payload: IUpdate) => void;
 }
 
 export interface IProps extends IPropsState, IPropsDispatch { }
@@ -53,6 +54,7 @@ export class MarginForm extends React.Component<IProps> {
       onSalePriceCurrencyValueChanged: this.onSalePriceCurrencyValueChanged.bind(this),
       onMarginChanged: this.onMarginChanged.bind(this),
       onMarkupChanged: this.onMarkupChanged.bind(this),
+      onDiscountChanged: this.onDiscountChanged.bind(this),
     };
   }
 
@@ -68,6 +70,7 @@ export class MarginForm extends React.Component<IProps> {
 
     const margin = this.props.marginCalculator.displayMargin;
     const markup = this.props.marginCalculator.displayMarkup;
+    const discount = this.props.marginCalculator.displayDiscount;
 
     return (
       <ScrollView>
@@ -118,6 +121,13 @@ export class MarginForm extends React.Component<IProps> {
           onEndEditing={this.handlers.onRecalculate}
         />
 
+        <MarginInput
+          text="Discount (%)"
+          value={discount}
+          onChangeText={this.handlers.onDiscountChanged}
+          onEndEditing={this.handlers.onRecalculate}
+        />
+
         <View style={styles.marginFormResetButtonContainer}>
           <View style={styles.marginFormResetButtonContainerInner}>
             <Button
@@ -164,6 +174,10 @@ export class MarginForm extends React.Component<IProps> {
 
   protected onMarkupChanged(value: string): void {
     this.props.updateMarkup({ value });
+  }
+
+  protected onDiscountChanged(value: string): void {
+    this.props.updateDiscount({ value });
   }
 
 }

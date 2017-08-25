@@ -9,12 +9,14 @@ export interface IMarginCalculator {
   displaySalePriceCurrencyValue: string;
   displayMargin: string;
   displayMarkup: string;
+  displayDiscount: string;
   costPrice: number;
   costPriceCurrency: number;
   salePrice: number;
   salePriceCurrency: number;
   margin: number;
   markup: number;
+  discount: number;
   lastUpdate: string;
 }
 
@@ -27,12 +29,14 @@ const defaultState: IMarginCalculator = {
   displaySalePriceCurrencyValue: "1.0000",
   displayMargin: "",
   displayMarkup: "",
+  displayDiscount: "",
   costPrice: 0,
   costPriceCurrency: 1,
   salePrice: 0,
   salePriceCurrency: 1,
   margin: 0,
   markup: 0,
+  discount: 0,
   lastUpdate: "",
 };
 
@@ -66,6 +70,9 @@ type UPDATE_MARGIN = typeof UPDATE_MARGIN;
 const UPDATE_MARKUP = "MarginCalculator/UpdateMarkup";
 type UPDATE_MARKUP = typeof UPDATE_MARKUP;
 
+const UPDATE_DISCOUNT = "MarginCalculator/UpdateDiscount";
+type UPDATE_DISCOUNT = typeof UPDATE_DISCOUNT;
+
 export interface IUpdate {
   value: string;
 }
@@ -85,14 +92,24 @@ export const updateSalePriceCurrency = createAction<IUpdateCurrency>(UPDATE_SALE
 export const updateSalePriceCurrencyValue = createAction<IUpdate>(UPDATE_SALE_PRICE_CURRENCY_VALUE);
 export const updateMargin = createAction<IUpdate>(UPDATE_MARGIN);
 export const updateMarkup = createAction<IUpdate>(UPDATE_MARKUP);
+export const updateDiscount = createAction<IUpdate>(UPDATE_DISCOUNT);
+
+function discountSalePrice(state: IMarginCalculator): number {
+  if (!!state.discount) {
+    return state.salePrice * (1 - (state.discount / 100));
+  }
+  return state.salePrice;
+}
 
 function recalculateMargin(state: IMarginCalculator): void {
-  state.margin = ((state.salePrice - state.costPrice) / state.salePrice) * 100;
+  const salePrice = discountSalePrice(state);
+  state.margin = ((salePrice - state.costPrice) / salePrice) * 100;
   state.displayMargin = state.margin.toFixed(2);
 }
 
 function recalculateMarkup(state: IMarginCalculator): void {
-  state.markup = ((state.salePrice / state.costPrice) * 100) - 100;
+  const salePrice = discountSalePrice(state);
+  state.markup = ((salePrice / state.costPrice) * 100) - 100;
   state.displayMarkup = state.markup.toFixed(2);
 }
 
@@ -107,132 +124,175 @@ function recalculateSalePriceFromMarkup(state: IMarginCalculator): void {
 }
 
 function recalculateCostPriceFromMargin(state: IMarginCalculator): void {
-  state.costPrice = state.salePrice - ((state.margin / 100) * state.salePrice);
+  const salePrice = discountSalePrice(state);
+  state.costPrice = salePrice - ((state.margin / 100) * salePrice);
   recalculateCostPriceCurrency(state);
 }
 
 function recalculateCostPriceFromMarkup(state: IMarginCalculator): void {
-  state.costPrice = state.salePrice / ((state.markup + 100) / 100);
+  const salePrice = discountSalePrice(state);
+  state.costPrice = salePrice / ((state.markup + 100) / 100);
   recalculateCostPriceCurrency(state);
 }
 
 function recalculateSalePriceCurrency(state: IMarginCalculator): void {
   if (!!state.salePrice) {
-    const salePriceInCurrency = state.salePrice * (state.salePriceCurrency / state.costPriceCurrency);
+    const salePrice = discountSalePrice(state);
+    const salePriceInCurrency = salePrice * state.salePriceCurrency;
     state.displaySalePrice = salePriceInCurrency.toFixed(2);
   }
 }
 
 function recalculateCostPriceCurrency(state: IMarginCalculator): void {
   if (!!state.costPrice) {
-    const costPriceInCurrency = state.costPrice * (state.costPriceCurrency / state.salePriceCurrency);
+    const costPriceInCurrency = state.costPrice * state.costPriceCurrency;
     state.displayCostPrice = costPriceInCurrency.toFixed(2);
   }
 }
 
 function recalculateState(state: IMarginCalculator): IMarginCalculator {
-  const newState = {
-    ...state,
-    costPrice: parseFloat(state.displayCostPrice),
-    costPriceCurrency: parseFloat(state.displayCostPriceCurrencyValue),
-    salePrice: parseFloat(state.displaySalePrice),
-    salePriceCurrency: parseFloat(state.displaySalePriceCurrencyValue),
-    margin: parseFloat(state.displayMargin),
-    markup: parseFloat(state.displayMarkup),
-  };
+  const newState = { ...state };
 
-  if (!!newState.costPrice && (newState.lastUpdate === UPDATE_COST_PRICE)) {
-    if (!!newState.salePrice) {
+  switch (newState.lastUpdate) {
+    case UPDATE_COST_PRICE: {
+      newState.costPrice = parseFloat(state.displayCostPrice);
+      if (!!newState.costPrice) {
+        // Convert to base currency value.
+        newState.costPrice = newState.costPrice * (1 / state.costPriceCurrency);
 
-      recalculateMargin(newState);
-      recalculateMarkup(newState);
+        if (!!newState.salePrice) {
 
-    } else if (!!newState.margin) {
+          recalculateMargin(newState);
+          recalculateMarkup(newState);
 
-      recalculateSalePriceFromMargin(newState);
-      recalculateMarkup(newState);
+        } else if (!!newState.margin) {
 
-    } else if (!!newState.markup) {
+          recalculateSalePriceFromMargin(newState);
+          recalculateMarkup(newState);
 
-      recalculateSalePriceFromMarkup(newState);
-      recalculateMargin(newState);
+        } else if (!!newState.markup) {
 
+          recalculateSalePriceFromMarkup(newState);
+          recalculateMargin(newState);
+
+        }
+      }
+      break;
     }
-  } else if (!!newState.salePrice && (newState.lastUpdate === UPDATE_SALE_PRICE)) {
-    if (!!newState.costPrice) {
+    case UPDATE_COST_PRICE_CURRENCY: {
+      newState.costPriceCurrency = parseFloat(state.displayCostPriceCurrencyValue);
+      if (!!newState.costPriceCurrency) {
+        if (!!newState.salePrice) {
+          if (!!newState.margin) {
 
-      recalculateMargin(newState);
-      recalculateMarkup(newState);
+            recalculateCostPriceFromMargin(newState);
+            recalculateMarkup(newState);
 
-    } else if (!!newState.margin) {
+          } else if (!!newState.markup) {
 
-      recalculateCostPriceFromMargin(newState);
-      recalculateMarkup(newState);
+            recalculateCostPriceFromMarkup(newState);
+            recalculateMargin(newState);
 
-    } else if (!!newState.markup) {
+          }
+        }
 
-      recalculateCostPriceFromMarkup(newState);
-      recalculateMargin(newState);
-
-    }
-  } else if (!!newState.margin && (newState.lastUpdate === UPDATE_MARGIN)) {
-    if (!!newState.costPrice) {
-
-      recalculateSalePriceFromMargin(newState);
-      recalculateMarkup(newState);
-
-    } else if (!!newState.salePrice) {
-
-      recalculateCostPriceFromMargin(newState);
-      recalculateMarkup(newState);
-
-    }
-  } else if (!!newState.markup && (newState.lastUpdate === UPDATE_MARKUP)) {
-    if (!!newState.costPrice) {
-
-      recalculateSalePriceFromMarkup(newState);
-      recalculateMargin(newState);
-
-    } else if (!!newState.salePrice) {
-
-      recalculateCostPriceFromMarkup(newState);
-      recalculateMargin(newState);
-
-    }
-  } else if (!!newState.costPriceCurrency && (newState.lastUpdate === UPDATE_COST_PRICE_CURRENCY)) {
-    if (!!newState.salePrice) {
-      if (!!newState.margin) {
-
-        recalculateCostPriceFromMargin(newState);
-        recalculateMarkup(newState);
-
-      } else if (!!newState.markup) {
-
-        recalculateCostPriceFromMarkup(newState);
-        recalculateMargin(newState);
+        recalculateCostPriceCurrency(newState);
 
       }
+      break;
     }
+    case UPDATE_SALE_PRICE: {
+      newState.salePrice = parseFloat(state.displaySalePrice);
+      if (!!newState.salePrice) {
+        // Convert to base currency value.
+        newState.salePrice = newState.salePrice * (1 / state.salePriceCurrency);
 
-    recalculateCostPriceCurrency(newState);
+        if (!!newState.costPrice) {
 
-  } else if (!!newState.salePriceCurrency && (newState.lastUpdate === UPDATE_SALE_PRICE_CURRENCY)) {
-    if (!!newState.costPrice) {
-      if (!!newState.margin) {
+          recalculateMargin(newState);
+          recalculateMarkup(newState);
 
-        recalculateSalePriceFromMargin(newState);
-        recalculateMarkup(newState);
+        } else if (!!newState.margin) {
 
-      } else if (!!newState.markup) {
+          recalculateCostPriceFromMargin(newState);
+          recalculateMarkup(newState);
 
-        recalculateSalePriceFromMarkup(newState);
-        recalculateMargin(newState);
+        } else if (!!newState.markup) {
+
+          recalculateCostPriceFromMarkup(newState);
+          recalculateMargin(newState);
+
+        }
+      }
+      break;
+    }
+    case UPDATE_SALE_PRICE_CURRENCY: {
+      newState.salePriceCurrency = parseFloat(state.displaySalePriceCurrencyValue);
+      if (!!newState.salePriceCurrency) {
+        if (!!newState.costPrice) {
+          if (!!newState.margin) {
+
+            recalculateSalePriceFromMargin(newState);
+            recalculateMarkup(newState);
+
+          } else if (!!newState.markup) {
+
+            recalculateSalePriceFromMarkup(newState);
+            recalculateMargin(newState);
+
+          }
+        }
+
+        recalculateSalePriceCurrency(newState);
 
       }
+      break;
     }
+    case UPDATE_MARGIN: {
+      newState.margin = parseFloat(state.displayMargin);
+      if (!!newState.margin) {
+        if (!!newState.costPrice) {
 
-    recalculateSalePriceCurrency(newState);
+          recalculateSalePriceFromMargin(newState);
+          recalculateMarkup(newState);
 
+        } else if (!!newState.salePrice) {
+
+          recalculateCostPriceFromMargin(newState);
+          recalculateMarkup(newState);
+
+        }
+      }
+      break;
+    }
+    case UPDATE_MARKUP: {
+      newState.markup = parseFloat(state.displayMarkup);
+      if (!!newState.markup) {
+        if (!!newState.costPrice) {
+
+          recalculateSalePriceFromMarkup(newState);
+          recalculateMargin(newState);
+
+        } else if (!!newState.salePrice) {
+
+          recalculateCostPriceFromMarkup(newState);
+          recalculateMargin(newState);
+
+        }
+      }
+      break;
+    }
+    case UPDATE_DISCOUNT: {
+      newState.discount = parseFloat(state.displayDiscount);
+      if (!!newState.costPrice && !!newState.salePrice) {
+
+        recalculateMargin(newState);
+        recalculateMarkup(newState);
+        recalculateSalePriceCurrency(newState);
+
+      }
+      break;
+    }
   }
 
   return newState;
@@ -325,6 +385,16 @@ export const reducer = handleActions<IMarginCalculator, any>({
         ...state,
         displayMarkup: action.payload.value,
         lastUpdate: UPDATE_MARKUP,
+      };
+    }
+    return state;
+  },
+  [UPDATE_DISCOUNT]: (state, action) => {
+    if (!!action.payload) {
+      return {
+        ...state,
+        displayDiscount: action.payload.value,
+        lastUpdate: UPDATE_DISCOUNT,
       };
     }
     return state;
