@@ -59,7 +59,7 @@ export const styles = StyleSheet.create({
     paddingTop: common.paddingTop,
   },
   currencyInputPickerContainer: {
-    flex: 0.50,
+    flex: 0.55,
     height: common.inputHeight,
     borderTopLeftRadius: common.borderRadius,
     borderBottomLeftRadius: common.borderRadius,
@@ -69,7 +69,7 @@ export const styles = StyleSheet.create({
     height: common.inputHeight,
   },
   currencyInputTextInput: {
-    flex: 0.25,
+    flex: 0.20,
     height: common.inputHeight,
     borderTopRightRadius: common.borderRadius,
     borderBottomRightRadius: common.borderRadius,

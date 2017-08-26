@@ -17,7 +17,9 @@ export interface ICurrencyRates {
 const defaultState: ICurrencyRates = {
   base: "GBP",
   date: "2017-08-23",
-  rates: {},
+  rates: {
+    GBP: 1.00,
+  },
 };
 
 const RATES_REQUEST = "CurrencyRates/RatesRequest";
@@ -35,7 +37,9 @@ export const reducer = handleActions<ICurrencyRates>({
   },
   [RATES_RESPONSE]: (state, action) => {
     if (!!action.payload) {
-      return action.payload;
+      const newState = { ...action.payload };
+      newState.rates = Object.assign({ GBP: 1.00 }, newState.rates);
+      return newState;
     }
     return state;
   },
