@@ -37,26 +37,6 @@ export class MarginForm extends React.Component<IProps> {
     },
   };
 
-  protected handlers: any;
-
-  public constructor(props: IProps) {
-    super(props);
-
-    // Bind action handlers for templates.
-    this.handlers = {
-      onReset: this.props.reset.bind(this),
-      onRecalculate: this.props.recalculate.bind(this),
-      onCostPriceChanged: this.onCostPriceChanged.bind(this),
-      onCostPriceCurrencyChanged: this.onCostPriceCurrencyChanged.bind(this),
-      onCostPriceCurrencyValueChanged: this.onCostPriceCurrencyValueChanged.bind(this),
-      onSalePriceChanged: this.onSalePriceChanged.bind(this),
-      onSalePriceCurrencyChanged: this.onSalePriceCurrencyChanged.bind(this),
-      onSalePriceCurrencyValueChanged: this.onSalePriceCurrencyValueChanged.bind(this),
-      onMarginChanged: this.onMarginChanged.bind(this),
-      onMarkupChanged: this.onMarkupChanged.bind(this),
-      onDiscountChanged: this.onDiscountChanged.bind(this),
-    };
-  }
 
   public render() {
 
@@ -72,67 +52,75 @@ export class MarginForm extends React.Component<IProps> {
     const markup = this.props.marginCalculator.displayMarkup;
     const discount = this.props.marginCalculator.displayDiscount;
 
+    const onReset = this.props.reset.bind(this);
+    const onRecalculate = this.props.recalculate.bind(this);
+
     return (
       <ScrollView>
 
         <MarginInput
-          text="Cost Price"
+          text={"Cost Price"}
           value={costPrice}
-          onChangeText={this.handlers.onCostPriceChanged}
-          onEndEditing={this.handlers.onRecalculate}
+          onTouch={this.onTouchInput("costPrice")}
+          onChangeText={this.onCostPriceChanged()}
+          onEndEditing={onRecalculate}
         />
 
         <CurrencyInput
           currencyRates={this.props.currencyRates}
           selectedValue={costPriceCurrency}
           value={costPriceCurrencyValue}
-          onValueChange={this.handlers.onCostPriceCurrencyChanged}
-          onChangeText={this.handlers.onCostPriceCurrencyValueChanged}
-          onEndEditing={this.handlers.onRecalculate}
+          onValueChange={this.onCostPriceCurrencyChanged()}
+          onChangeText={this.onCostPriceCurrencyValueChanged()}
+          onEndEditing={onRecalculate}
         />
 
         <MarginInput
-          text="Sale Price"
+          text={"Sale Price"}
           value={salePrice}
-          onChangeText={this.handlers.onSalePriceChanged}
-          onEndEditing={this.handlers.onRecalculate}
+          onTouch={this.onTouchInput("salePrice")}
+          onChangeText={this.onSalePriceChanged()}
+          onEndEditing={onRecalculate}
         />
 
         <CurrencyInput
           currencyRates={this.props.currencyRates}
           selectedValue={salePriceCurrency}
           value={salePriceCurrencyValue}
-          onValueChange={this.handlers.onSalePriceCurrencyChanged}
-          onChangeText={this.handlers.onSalePriceCurrencyValueChanged}
-          onEndEditing={this.handlers.onRecalculate}
+          onValueChange={this.onSalePriceCurrencyChanged()}
+          onChangeText={this.onSalePriceCurrencyValueChanged()}
+          onEndEditing={onRecalculate}
         />
 
         <MarginInput
-          text="Margin (%)"
+          text={"Margin (%)"}
           value={margin}
-          onChangeText={this.handlers.onMarginChanged}
-          onEndEditing={this.handlers.onRecalculate}
+          onTouch={this.onTouchInput("margin")}
+          onChangeText={this.onMarginChanged()}
+          onEndEditing={onRecalculate}
         />
 
         <MarginInput
-          text="Markup (%)"
+          text={"Markup (%)"}
           value={markup}
-          onChangeText={this.handlers.onMarkupChanged}
-          onEndEditing={this.handlers.onRecalculate}
+          onTouch={this.onTouchInput("markup")}
+          onChangeText={this.onMarkupChanged()}
+          onEndEditing={onRecalculate}
         />
 
         <MarginInput
-          text="Discount (%)"
+          text={"Discount (%)"}
           value={discount}
-          onChangeText={this.handlers.onDiscountChanged}
-          onEndEditing={this.handlers.onRecalculate}
+          onTouch={this.onTouchInput("discount")}
+          onChangeText={this.onDiscountChanged()}
+          onEndEditing={onRecalculate}
         />
 
         <View style={styles.marginFormResetButtonContainer}>
           <View style={styles.marginFormResetButtonContainerInner}>
             <Button
-              onPress={this.handlers.onReset}
-              title="Reset"
+              onPress={onReset}
+              title={"Reset"}
               color={colours.marginFormResetButton}
             />
           </View>
@@ -150,42 +138,68 @@ export class MarginForm extends React.Component<IProps> {
     );
   }
 
-  protected onCostPriceChanged(value: string): void {
-    this.props.updateCostPrice({ value });
+  protected onTouchInput(value: string) {
+    // TODO: Implement this.
+    return () => {
+      console.log("onTouchInput", value);
+      this.setModalVisible(true);
+    };
   }
 
-  protected onCostPriceCurrencyChanged(label: string): void {
-    const value = ((label === this.props.currencyRates.base) ? 1 : this.props.currencyRates.rates[label]).toFixed(4);
-    this.props.updateCostPriceCurrency({ label, value });
+  protected onCostPriceChanged() {
+    return (value: string) => {
+      this.props.updateCostPrice({ value });
+    };
   }
 
-  protected onCostPriceCurrencyValueChanged(value: string): void {
-    this.props.updateCostPriceCurrencyValue({ value });
+  protected onCostPriceCurrencyChanged() {
+    return (label: string) => {
+      const value = ((label === this.props.currencyRates.base) ? 1 : this.props.currencyRates.rates[label]).toFixed(4);
+      this.props.updateCostPriceCurrency({ label, value });
+    };
   }
 
-  protected onSalePriceChanged(value: string): void {
-    this.props.updateSalePrice({ value });
+  protected onCostPriceCurrencyValueChanged() {
+    return (value: string) => {
+      this.props.updateCostPriceCurrencyValue({ value });
+    };
   }
 
-  protected onSalePriceCurrencyChanged(label: string): void {
-    const value = ((label === this.props.currencyRates.base) ? 1 : this.props.currencyRates.rates[label]).toFixed(4);
-    this.props.updateSalePriceCurrency({ label, value });
+  protected onSalePriceChanged() {
+    return (value: string) => {
+      this.props.updateSalePrice({ value });
+    };
   }
 
-  protected onSalePriceCurrencyValueChanged(value: string): void {
-    this.props.updateSalePriceCurrencyValue({ value });
+  protected onSalePriceCurrencyChanged() {
+    return (label: string) => {
+      const value = ((label === this.props.currencyRates.base) ? 1 : this.props.currencyRates.rates[label]).toFixed(4);
+      this.props.updateSalePriceCurrency({ label, value });
+    };
   }
 
-  protected onMarginChanged(value: string): void {
-    this.props.updateMargin({ value });
+  protected onSalePriceCurrencyValueChanged() {
+    return (value: string) => {
+      this.props.updateSalePriceCurrencyValue({ value });
+    };
   }
 
-  protected onMarkupChanged(value: string): void {
-    this.props.updateMarkup({ value });
+  protected onMarginChanged() {
+    return (value: string) => {
+      this.props.updateMargin({ value });
+    };
   }
 
-  protected onDiscountChanged(value: string): void {
-    this.props.updateDiscount({ value });
+  protected onMarkupChanged() {
+    return (value: string) => {
+      this.props.updateMarkup({ value });
+    };
+  }
+
+  protected onDiscountChanged() {
+    return (value: string) => {
+      this.props.updateDiscount({ value });
+    };
   }
 
 }

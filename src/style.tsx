@@ -15,6 +15,7 @@ export const colours = {
   // MarginInput, CurrencyInput components.
   leftBackgroundColour: "#9FA8DA",
   rightBackgroundColour: "#C5CAE9",
+  pressBackgroundColor: "#5C6BC0",
   // MarginForm component.
   marginFormResetButton: "#5C6BC0",
   marginFormCurrencyDateText: "#424242",
@@ -33,7 +34,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: common.padding,
   },
-  marginInputTextContainer: {
+  marginInputTextTouchableHighlight: {
     justifyContent: "center",
     alignItems: "center",
     flex: 0.30,
