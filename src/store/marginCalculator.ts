@@ -32,32 +32,34 @@ const commonExplanations = {
   youDidThis: "You did this!",
 };
 
-const defaultState: IMarginCalculator = {
-  displayCostPrice: "",
-  displayCostPriceCurrency: "GBP",
-  displayCostPriceCurrencyValue: "1.0000",
-  displaySalePrice: "",
-  displaySalePriceCurrency: "GBP",
-  displaySalePriceCurrencyValue: "1.0000",
-  displayMargin: "",
-  displayMarkup: "",
-  displayDiscount: "",
-  costPrice: 0,
-  costPriceCurrency: 1,
-  salePrice: 0,
-  salePriceCurrency: 1,
-  margin: 0,
-  markup: 0,
-  discount: 0,
-  lastUpdate: "",
-  explain: {
-    costPrice: commonExplanations.nothingHere,
-    salePrice: commonExplanations.nothingHere,
-    margin: commonExplanations.nothingHere,
-    markup: commonExplanations.nothingHere,
-    discount: commonExplanations.nothingHere,
-  },
-};
+function defaultState(): IMarginCalculator {
+  return {
+    displayCostPrice: "",
+    displayCostPriceCurrency: "GBP",
+    displayCostPriceCurrencyValue: "1.0000",
+    displaySalePrice: "",
+    displaySalePriceCurrency: "GBP",
+    displaySalePriceCurrencyValue: "1.0000",
+    displayMargin: "",
+    displayMarkup: "",
+    displayDiscount: "",
+    costPrice: 0,
+    costPriceCurrency: 1,
+    salePrice: 0,
+    salePriceCurrency: 1,
+    margin: 0,
+    markup: 0,
+    discount: 0,
+    lastUpdate: "",
+    explain: {
+      costPrice: commonExplanations.nothingHere,
+      salePrice: commonExplanations.nothingHere,
+      margin: commonExplanations.nothingHere,
+      markup: commonExplanations.nothingHere,
+      discount: commonExplanations.nothingHere,
+    },
+  };
+}
 
 const RESET = "MarginCalculator/Reset";
 type RESET = typeof RESET;
@@ -412,7 +414,7 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
 
 export const reducer = handleActions<IMarginCalculator, any>({
   [RESET]: (state, action) => {
-    return defaultState;
+    return defaultState();
   },
   [RECALCULATE]: (state, action) => {
     return recalculateState(state);
@@ -511,4 +513,4 @@ export const reducer = handleActions<IMarginCalculator, any>({
     }
     return state;
   },
-}, defaultState);
+}, defaultState());
