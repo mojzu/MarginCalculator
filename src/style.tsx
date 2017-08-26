@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 
 const common = {
-  paddingTop: 10,
+  padding: 10,
   inputHeight: 45,
   borderRadius: 4,
 };
@@ -17,6 +17,7 @@ export const colours = {
   rightBackgroundColour: "#C5CAE9",
   // MarginForm component.
   marginFormResetButton: "#5C6BC0",
+  marginFormCurrencyDateText: "#424242",
 };
 
 export const styles = StyleSheet.create({
@@ -30,7 +31,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: common.paddingTop,
+    paddingTop: common.padding,
   },
   marginInputTextContainer: {
     justifyContent: "center",
@@ -56,7 +57,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: common.paddingTop,
+    paddingTop: common.padding,
   },
   currencyInputPickerContainer: {
     flex: 0.55,
@@ -80,9 +81,23 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: common.paddingTop,
+    paddingTop: common.padding,
   },
   marginFormResetButtonContainerInner: {
     flex: 0.75,
+  },
+  marginFormCurrencyDateContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: common.padding,
+    paddingBottom: common.padding,
+  },
+  marginFormCurrencyDateContainerInnter: {
+    flex: 0.75,
+  },
+  marginFormCurrencyDateText: {
+    color: colours.marginFormCurrencyDateText,
+    fontSize: 12,
   },
 });

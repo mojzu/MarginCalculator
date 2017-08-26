@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ScrollView, View, Button } from "react-native";
+import { ScrollView, View, Button, Text } from "react-native";
 import { ICurrencyRates } from "../store/currencyRates";
 import { IMarginCalculator, IUpdate, IUpdateCurrency } from "../store/marginCalculator";
 import { colours, styles } from "../style";
@@ -135,6 +135,14 @@ export class MarginForm extends React.Component<IProps> {
               title="Reset"
               color={colours.marginFormResetButton}
             />
+          </View>
+        </View>
+
+        <View style={styles.marginFormCurrencyDateContainer}>
+          <View style={styles.marginFormCurrencyDateContainerInnter}>
+            <Text style={styles.marginFormCurrencyDateText}>
+              Exchange rates from: {this.props.currencyRates.date}
+            </Text>
           </View>
         </View>
 
