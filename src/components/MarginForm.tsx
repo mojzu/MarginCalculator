@@ -3,8 +3,17 @@ import { ScrollView, View, Button, Text } from "react-native";
 import { ICurrencyRates } from "../store/currencyRates";
 import { IMarginCalculator, IUpdate, IUpdateCurrency } from "../store/marginCalculator";
 import { colours, styles } from "../style";
+import { IExplainModalState, ExplainModal } from "./ExplainModal";
 import { MarginInput } from "./MarginInput";
 import { CurrencyInput } from "./CurrencyInput";
+
+const explainTitles = {
+  costPrice: "Cost Price",
+  salePrice: "Sale Price",
+  margin: "Margin",
+  markup: "Markup",
+  discount: "Discount",
+};
 
 export interface IPropsState {
   currencyRates: ICurrencyRates;
@@ -27,7 +36,7 @@ export interface IPropsDispatch {
 
 export interface IProps extends IPropsState, IPropsDispatch { }
 
-export class MarginForm extends React.Component<IProps> {
+export class MarginForm extends React.Component<IProps, IExplainModalState> {
 
   public static navigationOptions = {
     title: "Margin Calculator",
@@ -37,6 +46,9 @@ export class MarginForm extends React.Component<IProps> {
     },
   };
 
+  public state: IExplainModalState = {
+    visible: false,
+  };
 
   public render() {
 
@@ -57,6 +69,12 @@ export class MarginForm extends React.Component<IProps> {
 
     return (
       <ScrollView>
+
+        <ExplainModal
+          state={this.state}
+          onRequestClose={this.onModalRequestClose()}
+          onTouch={this.onModalRequestClose()}
+        />
 
         <MarginInput
           text={"Cost Price"}
@@ -138,11 +156,24 @@ export class MarginForm extends React.Component<IProps> {
     );
   }
 
+  protected setModalVisible(visible: boolean, title?: string, text?: string) {
+    this.setState({ visible, title, text });
+  }
+
+  protected onModalRequestClose() {
+    return () => {
+      this.setModalVisible(false);
+    };
+  }
+
   protected onTouchInput(value: string) {
     // TODO: Implement this.
     return () => {
-      console.log("onTouchInput", value);
-      this.setModalVisible(true);
+      if (this.props.marginCalculator.explain.hasOwnProperty(value)) {
+        const title = explainTitles[value];
+        const text = this.props.marginCalculator.explain[value];
+        this.setModalVisible(true, title, text);
+      }
     };
   }
 

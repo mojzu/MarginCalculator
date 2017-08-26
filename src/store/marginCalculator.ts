@@ -18,7 +18,19 @@ export interface IMarginCalculator {
   markup: number;
   discount: number;
   lastUpdate: string;
+  explain: {
+    costPrice: string;
+    salePrice: string;
+    margin: string;
+    markup: string;
+    discount: string;
+  };
 }
+
+const commonExplanations = {
+  nothingHere: "Nothing here... awkward turtle-duck.",
+  youDidThis: "You did this!",
+};
 
 const defaultState: IMarginCalculator = {
   displayCostPrice: "",
@@ -38,6 +50,13 @@ const defaultState: IMarginCalculator = {
   markup: 0,
   discount: 0,
   lastUpdate: "",
+  explain: {
+    costPrice: commonExplanations.nothingHere,
+    salePrice: commonExplanations.nothingHere,
+    margin: commonExplanations.nothingHere,
+    markup: commonExplanations.nothingHere,
+    discount: commonExplanations.nothingHere,
+  },
 };
 
 const RESET = "MarginCalculator/Reset";
@@ -101,38 +120,121 @@ function discountSalePrice(state: IMarginCalculator): number {
   return state.salePrice;
 }
 
+// TODO: Improve explanations with currency, discount handling.
+
+function explainSalePriceFromMargin(state: IMarginCalculator): string {
+  const displaySalePrice = state.salePrice.toFixed(2);
+  const displayCostPrice = state.costPrice.toFixed(2);
+  const displayMargin = (state.margin / 100).toFixed(2);
+  return `
+  SalePrice = CostPrice / (1 - Margin)
+  ${displaySalePrice} = ${displayCostPrice} / (1 - ${displayMargin})
+  `;
+}
+
+function explainSalePriceFromMarkup(state: IMarginCalculator): string {
+  const displaySalePrice = state.salePrice.toFixed(2);
+  const displayCostPrice = state.costPrice.toFixed(2);
+  const displayMarkup = (state.markup / 100).toFixed(2);
+  return `
+  SalePrice = (CostPrice * Markup) + CostPrice
+  ${displaySalePrice} = (${displayCostPrice} * ${displayMarkup}) + ${displayCostPrice}
+  `;
+}
+
+function explainCostPriceFromMargin(state: IMarginCalculator): string {
+  const displaySalePrice = state.salePrice.toFixed(2);
+  const displayCostPrice = state.costPrice.toFixed(2);
+  const displayMargin = (state.margin / 100).toFixed(2);
+
+  return `
+  CostPrice = SalePrice - (SalePrice * Margin)
+  ${displayCostPrice} = ${displaySalePrice} - (${displaySalePrice} * ${displayMargin})
+  `;
+}
+
+function explainCostPriceFromMarkup(state: IMarginCalculator): string {
+  const displaySalePrice = state.salePrice.toFixed(2);
+  const displayCostPrice = state.costPrice.toFixed(2);
+  const displayMarkup = (state.markup / 100).toFixed(2);
+  return `
+  CostPrice = SalePrice / (Markup + 1)
+  ${displayCostPrice} = ${displaySalePrice} / (${displayMarkup} + 1)
+  `;
+}
+
+function explainMargin(state: IMarginCalculator): string {
+  const salePrice = discountSalePrice(state);
+  const profit = salePrice - state.costPrice;
+  const displayProfit = profit.toFixed(2);
+  const displaySalePrice = salePrice.toFixed(2);
+  const displayCostPrice = state.costPrice.toFixed(2);
+  const displayMargin = state.margin.toFixed(2);
+  return `
+  Profit = SalePrice - CostPrice
+  ${displayProfit} = ${displaySalePrice} - ${displayCostPrice}
+
+  Margin = (Profit / SalePrice) * 100
+  ${displayMargin} = (${displayProfit} / ${displaySalePrice}) * 100
+  `;
+}
+
+function explainMarkup(state: IMarginCalculator): string {
+  const salePrice = discountSalePrice(state);
+  const profit = salePrice - state.costPrice;
+
+  const displayProfit = profit.toFixed(2);
+  const displaySalePrice = salePrice.toFixed(2);
+  const displayCostPrice = state.costPrice.toFixed(2);
+  const displayMarkup = state.markup.toFixed(2);
+
+  return `
+  Profit = SalePrice - CostPrice
+  ${displayProfit} = ${displaySalePrice} - ${displayCostPrice}
+
+  Markup = (Profit / CostPrice) * 100
+  ${displayMarkup} = (${displayProfit} / ${displayCostPrice}) * 100
+  `;
+}
+
 function recalculateMargin(state: IMarginCalculator): void {
   const salePrice = discountSalePrice(state);
   state.margin = ((salePrice - state.costPrice) / salePrice) * 100;
   state.displayMargin = state.margin.toFixed(2);
+  state.explain.margin = explainMargin(state);
 }
 
 function recalculateMarkup(state: IMarginCalculator): void {
   const salePrice = discountSalePrice(state);
-  state.markup = ((salePrice / state.costPrice) * 100) - 100;
+  state.markup = ((salePrice - state.costPrice) / state.costPrice) * 100;
   state.displayMarkup = state.markup.toFixed(2);
+  state.explain.markup = explainMarkup(state);
 }
 
 function recalculateSalePriceFromMargin(state: IMarginCalculator): void {
   state.salePrice = state.costPrice / (1 - (state.margin / 100));
   recalculateSalePriceCurrency(state);
+  state.explain.salePrice = explainSalePriceFromMargin(state);
 }
 
 function recalculateSalePriceFromMarkup(state: IMarginCalculator): void {
   state.salePrice = (state.costPrice * (state.markup / 100)) + state.costPrice;
   recalculateSalePriceCurrency(state);
+  state.explain.salePrice = explainSalePriceFromMarkup(state);
 }
 
 function recalculateCostPriceFromMargin(state: IMarginCalculator): void {
   const salePrice = discountSalePrice(state);
   state.costPrice = salePrice - ((state.margin / 100) * salePrice);
   recalculateCostPriceCurrency(state);
+  state.explain.costPrice = explainCostPriceFromMargin(state);
 }
 
 function recalculateCostPriceFromMarkup(state: IMarginCalculator): void {
   const salePrice = discountSalePrice(state);
-  state.costPrice = salePrice / ((state.markup + 100) / 100);
+  state.costPrice = salePrice / ((state.markup / 100) + 1);
   recalculateCostPriceCurrency(state);
+  state.explain.costPrice = explainCostPriceFromMarkup(state);
 }
 
 function recalculateSalePriceCurrency(state: IMarginCalculator): void {
@@ -156,6 +258,8 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
   switch (newState.lastUpdate) {
     case UPDATE_COST_PRICE: {
       newState.costPrice = parseFloat(state.displayCostPrice);
+      newState.explain.costPrice = commonExplanations.youDidThis;
+
       if (!!newState.costPrice) {
         // Convert to base currency value.
         newState.costPrice = newState.costPrice * (1 / state.costPriceCurrency);
@@ -203,6 +307,8 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
     }
     case UPDATE_SALE_PRICE: {
       newState.salePrice = parseFloat(state.displaySalePrice);
+      newState.explain.salePrice = commonExplanations.youDidThis;
+
       if (!!newState.salePrice) {
         // Convert to base currency value.
         newState.salePrice = newState.salePrice * (1 / state.salePriceCurrency);
@@ -250,6 +356,8 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
     }
     case UPDATE_MARGIN: {
       newState.margin = parseFloat(state.displayMargin);
+      newState.explain.margin = commonExplanations.youDidThis;
+
       if (!!newState.margin) {
         if (!!newState.costPrice) {
 
@@ -267,6 +375,8 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
     }
     case UPDATE_MARKUP: {
       newState.markup = parseFloat(state.displayMarkup);
+      newState.explain.markup = commonExplanations.youDidThis;
+
       if (!!newState.markup) {
         if (!!newState.costPrice) {
 
@@ -284,6 +394,8 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
     }
     case UPDATE_DISCOUNT: {
       newState.discount = parseFloat(state.displayDiscount);
+      newState.explain.discount = commonExplanations.youDidThis;
+
       if (!!newState.costPrice && !!newState.salePrice) {
 
         recalculateMargin(newState);
