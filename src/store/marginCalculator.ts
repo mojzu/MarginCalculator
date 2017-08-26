@@ -148,7 +148,6 @@ function explainCostPriceFromMargin(state: IMarginCalculator): string {
   const displaySalePrice = state.salePrice.toFixed(2);
   const displayCostPrice = state.costPrice.toFixed(2);
   const displayMargin = (state.margin / 100).toFixed(2);
-
   return `
   CostPrice = SalePrice - (SalePrice * Margin)
   ${displayCostPrice} = ${displaySalePrice} - (${displaySalePrice} * ${displayMargin})
@@ -184,12 +183,10 @@ function explainMargin(state: IMarginCalculator): string {
 function explainMarkup(state: IMarginCalculator): string {
   const salePrice = discountSalePrice(state);
   const profit = salePrice - state.costPrice;
-
   const displayProfit = profit.toFixed(2);
   const displaySalePrice = salePrice.toFixed(2);
   const displayCostPrice = state.costPrice.toFixed(2);
   const displayMarkup = state.markup.toFixed(2);
-
   return `
   Profit = SalePrice - CostPrice
   ${displayProfit} = ${displaySalePrice} - ${displayCostPrice}
