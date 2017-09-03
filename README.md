@@ -27,3 +27,10 @@ For live reload during development run the following commands.
 $ yarn run tsc:w
 $ yarn run android
 ```
+
+To upgrade React Native version.
+
+```Shell
+$ sudo yarn global add react-native-git-upgrade
+$ react-native-git-upgrade
+```
