@@ -1,6 +1,6 @@
 {
   "name": "MarginCalculator",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "scripts": {
     "clean": "gulp clean",
@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "react": "16.0.0-alpha.12",
-    "react-native": "0.48.0",
+    "react-native": "0.48.1",
     "react-navigation": "^1.0.0-beta.11",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
