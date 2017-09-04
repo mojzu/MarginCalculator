@@ -6,13 +6,17 @@ import { colours, styles } from "../style";
 import { IExplainModalState, ExplainModal } from "./ExplainModal";
 import { MarginInput } from "./MarginInput";
 import { CurrencyInput } from "./CurrencyInput";
+import { MarginOutput } from "./MarginOutput";
 
-const explainTitles = {
+const titles = {
   costPrice: "Cost Price",
   salePrice: "Sale Price",
-  margin: "Margin",
-  markup: "Markup",
-  discount: "Discount",
+  margin: "Margin (%)",
+  markup: "Markup (%)",
+  discount: "Discount (%)",
+  discountedSalePrice: "Discounted Sale Price",
+  discountedMargin: "Discounted Margin (%)",
+  discountedMarkup: "Discounted Markup (%)",
 };
 
 export interface IPropsState {
@@ -63,6 +67,9 @@ export class MarginForm extends React.Component<IProps, IExplainModalState> {
     const margin = this.props.marginCalculator.displayMargin;
     const markup = this.props.marginCalculator.displayMarkup;
     const discount = this.props.marginCalculator.displayDiscount;
+    const discountedSalePrice = this.props.marginCalculator.display.discountedSalePrice;
+    const discountedMargin = this.props.marginCalculator.display.discountedMargin;
+    const discountedMarkup = this.props.marginCalculator.display.discountedMarkup;
 
     const onReset = this.props.reset.bind(this);
     const onRecalculate = this.props.recalculate.bind(this);
@@ -77,7 +84,7 @@ export class MarginForm extends React.Component<IProps, IExplainModalState> {
         />
 
         <MarginInput
-          text={"Cost Price"}
+          text={titles.costPrice}
           value={costPrice}
           onTouch={this.onTouchInput("costPrice")}
           onChangeText={this.onCostPriceChanged()}
@@ -94,7 +101,7 @@ export class MarginForm extends React.Component<IProps, IExplainModalState> {
         />
 
         <MarginInput
-          text={"Sale Price"}
+          text={titles.salePrice}
           value={salePrice}
           onTouch={this.onTouchInput("salePrice")}
           onChangeText={this.onSalePriceChanged()}
@@ -111,7 +118,7 @@ export class MarginForm extends React.Component<IProps, IExplainModalState> {
         />
 
         <MarginInput
-          text={"Margin (%)"}
+          text={titles.margin}
           value={margin}
           onTouch={this.onTouchInput("margin")}
           onChangeText={this.onMarginChanged()}
@@ -119,7 +126,7 @@ export class MarginForm extends React.Component<IProps, IExplainModalState> {
         />
 
         <MarginInput
-          text={"Markup (%)"}
+          text={titles.markup}
           value={markup}
           onTouch={this.onTouchInput("markup")}
           onChangeText={this.onMarkupChanged()}
@@ -127,11 +134,29 @@ export class MarginForm extends React.Component<IProps, IExplainModalState> {
         />
 
         <MarginInput
-          text={"Discount (%)"}
+          text={titles.discount}
           value={discount}
           onTouch={this.onTouchInput("discount")}
           onChangeText={this.onDiscountChanged()}
           onEndEditing={onRecalculate}
+        />
+
+        <MarginOutput
+          text={titles.discountedSalePrice}
+          value={discountedSalePrice}
+          onTouch={this.onTouchInput("discountedSalePrice")}
+        />
+
+        <MarginOutput
+          text={titles.discountedMargin}
+          value={discountedMargin}
+          onTouch={this.onTouchInput("discountedMargin")}
+        />
+
+        <MarginOutput
+          text={titles.discountedMarkup}
+          value={discountedMarkup}
+          onTouch={this.onTouchInput("discountedMarkup")}
         />
 
         <View style={styles.marginFormResetButtonContainer}>
@@ -170,7 +195,7 @@ export class MarginForm extends React.Component<IProps, IExplainModalState> {
     // TODO: Implement this.
     return () => {
       if (this.props.marginCalculator.explain.hasOwnProperty(value)) {
-        const title = explainTitles[value];
+        const title = titles[value];
         const text = this.props.marginCalculator.explain[value];
         this.setModalVisible(true, title, text);
       }

@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 const common = {
   padding: 10,
-  inputHeight: 45,
+  inputHeight: 40,
   borderWidth: 1,
   borderRadius: 4,
 };
@@ -42,7 +42,7 @@ export const styles = StyleSheet.create({
   marginInputTextTouchableHighlight: {
     justifyContent: "center",
     alignItems: "center",
-    flex: 0.30,
+    flex: 0.35,
     height: common.inputHeight,
     borderTopLeftRadius: common.borderRadius,
     borderBottomLeftRadius: common.borderRadius,
@@ -52,11 +52,42 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   marginInputTextInput: {
+    flex: 0.60,
+    height: common.inputHeight,
+    borderTopRightRadius: common.borderRadius,
+    borderBottomRightRadius: common.borderRadius,
+    backgroundColor: colours.rightBackgroundColour,
+  },
+  // MarginOutput component.
+  marginOutputContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: common.padding,
+  },
+  marginOutputTextTouchableHighlight: {
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 0.50,
+    height: common.inputHeight,
+    borderTopLeftRadius: common.borderRadius,
+    borderBottomLeftRadius: common.borderRadius,
+    backgroundColor: colours.leftBackgroundColour,
+  },
+  marginOutputText: {
+    fontWeight: "bold",
+  },
+  marginOutputValueContainer: {
+    justifyContent: "center",
+    alignItems: "center",
     flex: 0.45,
     height: common.inputHeight,
     borderTopRightRadius: common.borderRadius,
     borderBottomRightRadius: common.borderRadius,
     backgroundColor: colours.rightBackgroundColour,
+  },
+  marginOutputValueText: {
+    fontWeight: "bold",
   },
   // CurrencyInput component.
   currencyInputContainer: {
@@ -66,7 +97,7 @@ export const styles = StyleSheet.create({
     paddingTop: common.padding,
   },
   currencyInputPickerContainer: {
-    flex: 0.55,
+    flex: 0.70,
     height: common.inputHeight,
     borderTopLeftRadius: common.borderRadius,
     borderBottomLeftRadius: common.borderRadius,
@@ -76,7 +107,7 @@ export const styles = StyleSheet.create({
     height: common.inputHeight,
   },
   currencyInputTextInput: {
-    flex: 0.20,
+    flex: 0.25,
     height: common.inputHeight,
     borderTopRightRadius: common.borderRadius,
     borderBottomRightRadius: common.borderRadius,
@@ -91,7 +122,7 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   explainModalContainer: {
-    flex: 0.90,
+    flex: 0.95,
     padding: common.padding,
     backgroundColor: colours.containerBackgroundColour,
     borderRadius: common.borderRadius,
@@ -113,7 +144,7 @@ export const styles = StyleSheet.create({
     paddingTop: common.padding,
   },
   marginFormResetButtonContainerInner: {
-    flex: 0.75,
+    flex: 0.95,
   },
   marginFormCurrencyDateContainer: {
     flexDirection: "row",
@@ -123,7 +154,7 @@ export const styles = StyleSheet.create({
     paddingBottom: common.padding,
   },
   marginFormCurrencyDateContainerInnter: {
-    flex: 0.75,
+    flex: 0.95,
   },
   marginFormCurrencyDateText: {
     color: colours.textColour,

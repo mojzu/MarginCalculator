@@ -18,16 +18,24 @@ export interface IMarginCalculator {
   markup: number;
   discount: number;
   lastUpdate: string;
+  display: {
+    discountedSalePrice: string;
+    discountedMargin: string;
+    discountedMarkup: string;
+  };
   explain: {
     costPrice: string;
     salePrice: string;
     margin: string;
     markup: string;
     discount: string;
+    discountedSalePrice: string;
+    discountedMargin: string;
+    discountedMarkup: string;
   };
 }
 
-const commonExplanations = {
+const explanations = {
   nothingHere: "Nothing here... awkward turtle-duck.",
   youDidThis: "You did this!",
 };
@@ -51,12 +59,20 @@ function defaultState(): IMarginCalculator {
     markup: 0,
     discount: 0,
     lastUpdate: "",
+    display: {
+      discountedSalePrice: "",
+      discountedMargin: "",
+      discountedMarkup: "",
+    },
     explain: {
-      costPrice: commonExplanations.nothingHere,
-      salePrice: commonExplanations.nothingHere,
-      margin: commonExplanations.nothingHere,
-      markup: commonExplanations.nothingHere,
-      discount: commonExplanations.nothingHere,
+      costPrice: explanations.nothingHere,
+      salePrice: explanations.nothingHere,
+      margin: explanations.nothingHere,
+      markup: explanations.nothingHere,
+      discount: explanations.nothingHere,
+      discountedSalePrice: explanations.nothingHere,
+      discountedMargin: explanations.nothingHere,
+      discountedMarkup: explanations.nothingHere,
     },
   };
 }
@@ -257,7 +273,7 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
   switch (newState.lastUpdate) {
     case UPDATE_COST_PRICE: {
       newState.costPrice = parseFloat(state.displayCostPrice);
-      newState.explain.costPrice = commonExplanations.youDidThis;
+      newState.explain.costPrice = explanations.youDidThis;
 
       if (!!newState.costPrice) {
         // Convert to base currency value.
@@ -306,7 +322,7 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
     }
     case UPDATE_SALE_PRICE: {
       newState.salePrice = parseFloat(state.displaySalePrice);
-      newState.explain.salePrice = commonExplanations.youDidThis;
+      newState.explain.salePrice = explanations.youDidThis;
 
       if (!!newState.salePrice) {
         // Convert to base currency value.
@@ -355,7 +371,7 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
     }
     case UPDATE_MARGIN: {
       newState.margin = parseFloat(state.displayMargin);
-      newState.explain.margin = commonExplanations.youDidThis;
+      newState.explain.margin = explanations.youDidThis;
 
       if (!!newState.margin) {
         if (!!newState.costPrice) {
@@ -374,7 +390,7 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
     }
     case UPDATE_MARKUP: {
       newState.markup = parseFloat(state.displayMarkup);
-      newState.explain.markup = commonExplanations.youDidThis;
+      newState.explain.markup = explanations.youDidThis;
 
       if (!!newState.markup) {
         if (!!newState.costPrice) {
@@ -393,7 +409,7 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
     }
     case UPDATE_DISCOUNT: {
       newState.discount = parseFloat(state.displayDiscount);
-      newState.explain.discount = commonExplanations.youDidThis;
+      newState.explain.discount = explanations.youDidThis;
 
       if (!!newState.costPrice && !!newState.salePrice) {
 
