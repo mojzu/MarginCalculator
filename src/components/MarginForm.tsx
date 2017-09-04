@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ScrollView, View, Button, Text } from "react-native";
 import { ICurrencyRates } from "../store/currencyRates";
-import { IMarginCalculator, IUpdate, IUpdateCurrency } from "../store/marginCalculator";
+import { IMarginCalculator, IUpdate } from "../store/marginCalculator";
 import { colours, styles } from "../style";
 import { IExplainModalState, ExplainModal } from "./ExplainModal";
 import { MarginInput } from "./MarginInput";
@@ -28,10 +28,10 @@ export interface IPropsDispatch {
   reset: () => void;
   recalculate: () => void;
   updateCostPrice: (payload: IUpdate) => void;
-  updateCostPriceCurrency: (payload: IUpdateCurrency) => void;
+  updateCostPriceCurrency: (payload: IUpdate) => void;
   updateCostPriceCurrencyValue: (payload: IUpdate) => void;
   updateSalePrice: (payload: IUpdate) => void;
-  updateSalePriceCurrency: (payload: IUpdateCurrency) => void;
+  updateSalePriceCurrency: (payload: IUpdate) => void;
   updateSalePriceCurrencyValue: (payload: IUpdate) => void;
   updateMargin: (payload: IUpdate) => void;
   updateMarkup: (payload: IUpdate) => void;
@@ -56,17 +56,17 @@ export class MarginForm extends React.Component<IProps, IExplainModalState> {
 
   public render() {
 
-    const costPrice = this.props.marginCalculator.displayCostPrice;
-    const costPriceCurrency = this.props.marginCalculator.displayCostPriceCurrency;
-    const costPriceCurrencyValue = this.props.marginCalculator.displayCostPriceCurrencyValue;
+    const costPrice = this.props.marginCalculator.display.costPrice;
+    const costPriceCurrency = this.props.marginCalculator.display.costPriceCurrency;
+    const costPriceCurrencyValue = this.props.marginCalculator.display.costPriceCurrencyValue;
 
-    const salePrice = this.props.marginCalculator.displaySalePrice;
-    const salePriceCurrency = this.props.marginCalculator.displaySalePriceCurrency;
-    const salePriceCurrencyValue = this.props.marginCalculator.displaySalePriceCurrencyValue;
+    const salePrice = this.props.marginCalculator.display.salePrice;
+    const salePriceCurrency = this.props.marginCalculator.display.salePriceCurrency;
+    const salePriceCurrencyValue = this.props.marginCalculator.display.salePriceCurrencyValue;
 
-    const margin = this.props.marginCalculator.displayMargin;
-    const markup = this.props.marginCalculator.displayMarkup;
-    const discount = this.props.marginCalculator.displayDiscount;
+    const margin = this.props.marginCalculator.display.margin;
+    const markup = this.props.marginCalculator.display.markup;
+    const discount = this.props.marginCalculator.display.discount;
     const discountedSalePrice = this.props.marginCalculator.display.discountedSalePrice;
     const discountedMargin = this.props.marginCalculator.display.discountedMargin;
     const discountedMarkup = this.props.marginCalculator.display.discountedMarkup;
@@ -192,7 +192,6 @@ export class MarginForm extends React.Component<IProps, IExplainModalState> {
   }
 
   protected onTouchInput(value: string) {
-    // TODO: Implement this.
     return () => {
       if (this.props.marginCalculator.explain.hasOwnProperty(value)) {
         const title = titles[value];

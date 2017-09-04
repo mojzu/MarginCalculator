@@ -1,24 +1,25 @@
 import { createAction, handleActions } from "redux-actions";
 
 export interface IMarginCalculator {
-  displayCostPrice: string;
-  displayCostPriceCurrency: string;
-  displayCostPriceCurrencyValue: string;
-  displaySalePrice: string;
-  displaySalePriceCurrency: string;
-  displaySalePriceCurrencyValue: string;
-  displayMargin: string;
-  displayMarkup: string;
-  displayDiscount: string;
-  costPrice: number;
-  costPriceCurrency: number;
-  salePrice: number;
-  salePriceCurrency: number;
-  margin: number;
-  markup: number;
-  discount: number;
-  lastUpdate: string;
+  data: {
+    costPrice: number;
+    costPriceCurrency: number;
+    salePrice: number;
+    salePriceCurrency: number;
+    margin: number;
+    markup: number;
+    discount: number;
+  };
   display: {
+    costPrice: string;
+    costPriceCurrency: string;
+    costPriceCurrencyValue: string;
+    salePrice: string;
+    salePriceCurrency: string;
+    salePriceCurrencyValue: string;
+    margin: string;
+    markup: string;
+    discount: string;
     discountedSalePrice: string;
     discountedMargin: string;
     discountedMarkup: string;
@@ -33,6 +34,7 @@ export interface IMarginCalculator {
     discountedMargin: string;
     discountedMarkup: string;
   };
+  lastUpdate: string;
 }
 
 const explanations = {
@@ -42,24 +44,25 @@ const explanations = {
 
 function defaultState(): IMarginCalculator {
   return {
-    displayCostPrice: "",
-    displayCostPriceCurrency: "GBP",
-    displayCostPriceCurrencyValue: "1.0000",
-    displaySalePrice: "",
-    displaySalePriceCurrency: "GBP",
-    displaySalePriceCurrencyValue: "1.0000",
-    displayMargin: "",
-    displayMarkup: "",
-    displayDiscount: "",
-    costPrice: 0,
-    costPriceCurrency: 1,
-    salePrice: 0,
-    salePriceCurrency: 1,
-    margin: 0,
-    markup: 0,
-    discount: 0,
-    lastUpdate: "",
+    data: {
+      costPrice: 0,
+      costPriceCurrency: 1,
+      salePrice: 0,
+      salePriceCurrency: 1,
+      margin: 0,
+      markup: 0,
+      discount: 0,
+    },
     display: {
+      costPrice: "",
+      costPriceCurrency: "GBP",
+      costPriceCurrencyValue: "1.0000",
+      salePrice: "",
+      salePriceCurrency: "GBP",
+      salePriceCurrencyValue: "1.0000",
+      margin: "",
+      markup: "",
+      discount: "",
       discountedSalePrice: "",
       discountedMargin: "",
       discountedMarkup: "",
@@ -74,6 +77,7 @@ function defaultState(): IMarginCalculator {
       discountedMargin: explanations.nothingHere,
       discountedMarkup: explanations.nothingHere,
     },
+    lastUpdate: "",
   };
 }
 
@@ -112,38 +116,25 @@ type UPDATE_DISCOUNT = typeof UPDATE_DISCOUNT;
 
 export interface IUpdate {
   value: string;
-}
-
-export interface IUpdateCurrency {
-  label: string;
-  value: string;
+  label?: string;
 }
 
 export const reset = createAction<void>(RESET);
 export const recalculate = createAction<void>(RECALCULATE);
 export const updateCostPrice = createAction<IUpdate>(UPDATE_COST_PRICE);
-export const updateCostPriceCurrency = createAction<IUpdateCurrency>(UPDATE_COST_PRICE_CURRENCY);
+export const updateCostPriceCurrency = createAction<IUpdate>(UPDATE_COST_PRICE_CURRENCY);
 export const updateCostPriceCurrencyValue = createAction<IUpdate>(UPDATE_COST_PRICE_CURRENCY_VALUE);
 export const updateSalePrice = createAction<IUpdate>(UPDATE_SALE_PRICE);
-export const updateSalePriceCurrency = createAction<IUpdateCurrency>(UPDATE_SALE_PRICE_CURRENCY);
+export const updateSalePriceCurrency = createAction<IUpdate>(UPDATE_SALE_PRICE_CURRENCY);
 export const updateSalePriceCurrencyValue = createAction<IUpdate>(UPDATE_SALE_PRICE_CURRENCY_VALUE);
 export const updateMargin = createAction<IUpdate>(UPDATE_MARGIN);
 export const updateMarkup = createAction<IUpdate>(UPDATE_MARKUP);
 export const updateDiscount = createAction<IUpdate>(UPDATE_DISCOUNT);
 
-function discountSalePrice(state: IMarginCalculator): number {
-  if (!!state.discount) {
-    return state.salePrice * (1 - (state.discount / 100));
-  }
-  return state.salePrice;
-}
-
-// TODO: Improve explanations with currency, discount handling.
-
 function explainSalePriceFromMargin(state: IMarginCalculator): string {
-  const displaySalePrice = state.salePrice.toFixed(2);
-  const displayCostPrice = state.costPrice.toFixed(2);
-  const displayMargin = (state.margin / 100).toFixed(2);
+  const displaySalePrice = state.data.salePrice.toFixed(2);
+  const displayCostPrice = state.data.costPrice.toFixed(2);
+  const displayMargin = (state.data.margin / 100).toFixed(2);
   return `
   SalePrice = CostPrice / (1 - Margin)
   ${displaySalePrice} = ${displayCostPrice} / (1 - ${displayMargin})
@@ -151,9 +142,9 @@ function explainSalePriceFromMargin(state: IMarginCalculator): string {
 }
 
 function explainSalePriceFromMarkup(state: IMarginCalculator): string {
-  const displaySalePrice = state.salePrice.toFixed(2);
-  const displayCostPrice = state.costPrice.toFixed(2);
-  const displayMarkup = (state.markup / 100).toFixed(2);
+  const displaySalePrice = state.data.salePrice.toFixed(2);
+  const displayCostPrice = state.data.costPrice.toFixed(2);
+  const displayMarkup = (state.data.markup / 100).toFixed(2);
   return `
   SalePrice = (CostPrice * Markup) + CostPrice
   ${displaySalePrice} = (${displayCostPrice} * ${displayMarkup}) + ${displayCostPrice}
@@ -161,9 +152,9 @@ function explainSalePriceFromMarkup(state: IMarginCalculator): string {
 }
 
 function explainCostPriceFromMargin(state: IMarginCalculator): string {
-  const displaySalePrice = state.salePrice.toFixed(2);
-  const displayCostPrice = state.costPrice.toFixed(2);
-  const displayMargin = (state.margin / 100).toFixed(2);
+  const displaySalePrice = state.data.salePrice.toFixed(2);
+  const displayCostPrice = state.data.costPrice.toFixed(2);
+  const displayMargin = (state.data.margin / 100).toFixed(2);
   return `
   CostPrice = SalePrice - (SalePrice * Margin)
   ${displayCostPrice} = ${displaySalePrice} - (${displaySalePrice} * ${displayMargin})
@@ -171,22 +162,21 @@ function explainCostPriceFromMargin(state: IMarginCalculator): string {
 }
 
 function explainCostPriceFromMarkup(state: IMarginCalculator): string {
-  const displaySalePrice = state.salePrice.toFixed(2);
-  const displayCostPrice = state.costPrice.toFixed(2);
-  const displayMarkup = (state.markup / 100).toFixed(2);
+  const displaySalePrice = state.data.salePrice.toFixed(2);
+  const displayCostPrice = state.data.costPrice.toFixed(2);
+  const displayMarkup = (state.data.markup / 100).toFixed(2);
   return `
   CostPrice = SalePrice / (Markup + 1)
   ${displayCostPrice} = ${displaySalePrice} / (${displayMarkup} + 1)
   `;
 }
 
-function explainMargin(state: IMarginCalculator): string {
-  const salePrice = discountSalePrice(state);
-  const profit = salePrice - state.costPrice;
+function explainMargin(state: IMarginCalculator, salePrice = state.data.salePrice): string {
+  const profit = salePrice - state.data.costPrice;
   const displayProfit = profit.toFixed(2);
   const displaySalePrice = salePrice.toFixed(2);
-  const displayCostPrice = state.costPrice.toFixed(2);
-  const displayMargin = state.margin.toFixed(2);
+  const displayCostPrice = state.data.costPrice.toFixed(2);
+  const displayMargin = state.data.margin.toFixed(2);
   return `
   Profit = SalePrice - CostPrice
   ${displayProfit} = ${displaySalePrice} - ${displayCostPrice}
@@ -196,13 +186,12 @@ function explainMargin(state: IMarginCalculator): string {
   `;
 }
 
-function explainMarkup(state: IMarginCalculator): string {
-  const salePrice = discountSalePrice(state);
-  const profit = salePrice - state.costPrice;
+function explainMarkup(state: IMarginCalculator, salePrice = state.data.salePrice): string {
+  const profit = salePrice - state.data.costPrice;
   const displayProfit = profit.toFixed(2);
   const displaySalePrice = salePrice.toFixed(2);
-  const displayCostPrice = state.costPrice.toFixed(2);
-  const displayMarkup = state.markup.toFixed(2);
+  const displayCostPrice = state.data.costPrice.toFixed(2);
+  const displayMarkup = state.data.markup.toFixed(2);
   return `
   Profit = SalePrice - CostPrice
   ${displayProfit} = ${displaySalePrice} - ${displayCostPrice}
@@ -212,59 +201,78 @@ function explainMarkup(state: IMarginCalculator): string {
   `;
 }
 
+function explainDiscountedSalePrice(state: IMarginCalculator, discountSalePrice: number): string {
+  const displayDiscountedSalePrice = discountSalePrice.toFixed(2);
+  const displaySalePrice = state.data.salePrice.toFixed(2);
+  const displayDiscount = (state.data.discount / 100).toFixed(2);
+  return `
+  DiscountedSalePrice = SalePrice * (1 - Discount)
+  ${displayDiscountedSalePrice} = ${displaySalePrice} * (1 - ${displayDiscount})
+  `;
+}
+
 function recalculateMargin(state: IMarginCalculator): void {
-  const salePrice = discountSalePrice(state);
-  state.margin = ((salePrice - state.costPrice) / salePrice) * 100;
-  state.displayMargin = state.margin.toFixed(2);
+  state.data.margin = ((state.data.salePrice - state.data.costPrice) / state.data.salePrice) * 100;
+  state.display.margin = state.data.margin.toFixed(2);
   state.explain.margin = explainMargin(state);
 }
 
 function recalculateMarkup(state: IMarginCalculator): void {
-  const salePrice = discountSalePrice(state);
-  state.markup = ((salePrice - state.costPrice) / state.costPrice) * 100;
-  state.displayMarkup = state.markup.toFixed(2);
+  state.data.markup = ((state.data.salePrice - state.data.costPrice) / state.data.costPrice) * 100;
+  state.display.markup = state.data.markup.toFixed(2);
   state.explain.markup = explainMarkup(state);
 }
 
 function recalculateSalePriceFromMargin(state: IMarginCalculator): void {
-  state.salePrice = state.costPrice / (1 - (state.margin / 100));
+  state.data.salePrice = state.data.costPrice / (1 - (state.data.margin / 100));
   recalculateSalePriceCurrency(state);
   state.explain.salePrice = explainSalePriceFromMargin(state);
 }
 
 function recalculateSalePriceFromMarkup(state: IMarginCalculator): void {
-  state.salePrice = (state.costPrice * (state.markup / 100)) + state.costPrice;
+  state.data.salePrice = (state.data.costPrice * (state.data.markup / 100)) + state.data.costPrice;
   recalculateSalePriceCurrency(state);
   state.explain.salePrice = explainSalePriceFromMarkup(state);
 }
 
 function recalculateCostPriceFromMargin(state: IMarginCalculator): void {
-  const salePrice = discountSalePrice(state);
-  state.costPrice = salePrice - ((state.margin / 100) * salePrice);
+  state.data.costPrice = state.data.salePrice - ((state.data.margin / 100) * state.data.salePrice);
   recalculateCostPriceCurrency(state);
   state.explain.costPrice = explainCostPriceFromMargin(state);
 }
 
 function recalculateCostPriceFromMarkup(state: IMarginCalculator): void {
-  const salePrice = discountSalePrice(state);
-  state.costPrice = salePrice / ((state.markup / 100) + 1);
+  state.data.costPrice = state.data.salePrice / ((state.data.markup / 100) + 1);
   recalculateCostPriceCurrency(state);
   state.explain.costPrice = explainCostPriceFromMarkup(state);
 }
 
 function recalculateSalePriceCurrency(state: IMarginCalculator): void {
-  if (!!state.salePrice) {
-    const salePrice = discountSalePrice(state);
-    const salePriceInCurrency = salePrice * state.salePriceCurrency;
-    state.displaySalePrice = salePriceInCurrency.toFixed(2);
+  if (!!state.data.salePrice) {
+    const salePriceInCurrency = state.data.salePrice * state.data.salePriceCurrency;
+    state.display.salePrice = salePriceInCurrency.toFixed(2);
   }
 }
 
 function recalculateCostPriceCurrency(state: IMarginCalculator): void {
-  if (!!state.costPrice) {
-    const costPriceInCurrency = state.costPrice * state.costPriceCurrency;
-    state.displayCostPrice = costPriceInCurrency.toFixed(2);
+  if (!!state.data.costPrice) {
+    const costPriceInCurrency = state.data.costPrice * state.data.costPriceCurrency;
+    state.display.costPrice = costPriceInCurrency.toFixed(2);
   }
+}
+
+function recalculateDiscounted(state: IMarginCalculator): void {
+  const discountedSalePrice = state.data.salePrice * (1 - (state.data.discount / 100));
+  const discountedSalePriceInCurrency = discountedSalePrice * state.data.salePriceCurrency;
+  const discountedMargin = ((discountedSalePrice - state.data.costPrice) / discountedSalePrice) * 100;
+  const discountedMarkup = ((discountedSalePrice - state.data.costPrice) / state.data.costPrice) * 100;
+
+  state.display.discountedSalePrice = discountedSalePriceInCurrency.toFixed(2);
+  state.explain.discountedSalePrice = explainDiscountedSalePrice(state, discountedSalePrice);
+  state.display.discountedMargin = discountedMargin.toFixed(2);
+  state.explain.discountedMargin = explainMargin(state, discountedSalePrice);
+  state.display.discountedMarkup = discountedMarkup.toFixed(2);
+  state.explain.discountedMarkup = explainMarkup(state, discountedSalePrice);
 }
 
 function recalculateState(state: IMarginCalculator): IMarginCalculator {
@@ -272,24 +280,23 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
 
   switch (newState.lastUpdate) {
     case UPDATE_COST_PRICE: {
-      newState.costPrice = parseFloat(state.displayCostPrice);
+      newState.data.costPrice = parseFloat(state.display.costPrice);
       newState.explain.costPrice = explanations.youDidThis;
 
-      if (!!newState.costPrice) {
-        // Convert to base currency value.
-        newState.costPrice = newState.costPrice * (1 / state.costPriceCurrency);
+      if (!!newState.data.costPrice) {
+        newState.data.costPrice = newState.data.costPrice * (1 / state.data.costPriceCurrency);
 
-        if (!!newState.salePrice) {
+        if (!!newState.data.salePrice) {
 
           recalculateMargin(newState);
           recalculateMarkup(newState);
 
-        } else if (!!newState.margin) {
+        } else if (!!newState.data.margin) {
 
           recalculateSalePriceFromMargin(newState);
           recalculateMarkup(newState);
 
-        } else if (!!newState.markup) {
+        } else if (!!newState.data.markup) {
 
           recalculateSalePriceFromMarkup(newState);
           recalculateMargin(newState);
@@ -299,15 +306,16 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
       break;
     }
     case UPDATE_COST_PRICE_CURRENCY: {
-      newState.costPriceCurrency = parseFloat(state.displayCostPriceCurrencyValue);
-      if (!!newState.costPriceCurrency) {
-        if (!!newState.salePrice) {
-          if (!!newState.margin) {
+      newState.data.costPriceCurrency = parseFloat(state.display.costPriceCurrencyValue);
+
+      if (!!newState.data.costPriceCurrency) {
+        if (!!newState.data.salePrice) {
+          if (!!newState.data.margin) {
 
             recalculateCostPriceFromMargin(newState);
             recalculateMarkup(newState);
 
-          } else if (!!newState.markup) {
+          } else if (!!newState.data.markup) {
 
             recalculateCostPriceFromMarkup(newState);
             recalculateMargin(newState);
@@ -321,24 +329,23 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
       break;
     }
     case UPDATE_SALE_PRICE: {
-      newState.salePrice = parseFloat(state.displaySalePrice);
+      newState.data.salePrice = parseFloat(state.display.salePrice);
       newState.explain.salePrice = explanations.youDidThis;
 
-      if (!!newState.salePrice) {
-        // Convert to base currency value.
-        newState.salePrice = newState.salePrice * (1 / state.salePriceCurrency);
+      if (!!newState.data.salePrice) {
+        newState.data.salePrice = newState.data.salePrice * (1 / state.data.salePriceCurrency);
 
-        if (!!newState.costPrice) {
+        if (!!newState.data.costPrice) {
 
           recalculateMargin(newState);
           recalculateMarkup(newState);
 
-        } else if (!!newState.margin) {
+        } else if (!!newState.data.margin) {
 
           recalculateCostPriceFromMargin(newState);
           recalculateMarkup(newState);
 
-        } else if (!!newState.markup) {
+        } else if (!!newState.data.markup) {
 
           recalculateCostPriceFromMarkup(newState);
           recalculateMargin(newState);
@@ -348,15 +355,16 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
       break;
     }
     case UPDATE_SALE_PRICE_CURRENCY: {
-      newState.salePriceCurrency = parseFloat(state.displaySalePriceCurrencyValue);
-      if (!!newState.salePriceCurrency) {
-        if (!!newState.costPrice) {
-          if (!!newState.margin) {
+      newState.data.salePriceCurrency = parseFloat(state.display.salePriceCurrencyValue);
+
+      if (!!newState.data.salePriceCurrency) {
+        if (!!newState.data.costPrice) {
+          if (!!newState.data.margin) {
 
             recalculateSalePriceFromMargin(newState);
             recalculateMarkup(newState);
 
-          } else if (!!newState.markup) {
+          } else if (!!newState.data.markup) {
 
             recalculateSalePriceFromMarkup(newState);
             recalculateMargin(newState);
@@ -370,16 +378,16 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
       break;
     }
     case UPDATE_MARGIN: {
-      newState.margin = parseFloat(state.displayMargin);
+      newState.data.margin = parseFloat(state.display.margin);
       newState.explain.margin = explanations.youDidThis;
 
-      if (!!newState.margin) {
-        if (!!newState.costPrice) {
+      if (!!newState.data.margin) {
+        if (!!newState.data.costPrice) {
 
           recalculateSalePriceFromMargin(newState);
           recalculateMarkup(newState);
 
-        } else if (!!newState.salePrice) {
+        } else if (!!newState.data.salePrice) {
 
           recalculateCostPriceFromMargin(newState);
           recalculateMarkup(newState);
@@ -389,16 +397,16 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
       break;
     }
     case UPDATE_MARKUP: {
-      newState.markup = parseFloat(state.displayMarkup);
+      newState.data.markup = parseFloat(state.display.markup);
       newState.explain.markup = explanations.youDidThis;
 
-      if (!!newState.markup) {
-        if (!!newState.costPrice) {
+      if (!!newState.data.markup) {
+        if (!!newState.data.costPrice) {
 
           recalculateSalePriceFromMarkup(newState);
           recalculateMargin(newState);
 
-        } else if (!!newState.salePrice) {
+        } else if (!!newState.data.salePrice) {
 
           recalculateCostPriceFromMarkup(newState);
           recalculateMargin(newState);
@@ -408,24 +416,22 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
       break;
     }
     case UPDATE_DISCOUNT: {
-      newState.discount = parseFloat(state.displayDiscount);
+      newState.data.discount = parseFloat(state.display.discount);
       newState.explain.discount = explanations.youDidThis;
-
-      if (!!newState.costPrice && !!newState.salePrice) {
-
-        recalculateMargin(newState);
-        recalculateMarkup(newState);
-        recalculateSalePriceCurrency(newState);
-
-      }
       break;
     }
+  }
+
+  if (!!newState.data.discount && !!newState.data.costPrice && !!newState.data.salePrice) {
+
+    recalculateDiscounted(newState);
+
   }
 
   return newState;
 }
 
-export const reducer = handleActions<IMarginCalculator, any>({
+export const reducer = handleActions<IMarginCalculator, IUpdate>({
   [RESET]: (state, action) => {
     return defaultState();
   },
@@ -436,18 +442,24 @@ export const reducer = handleActions<IMarginCalculator, any>({
     if (!!action.payload) {
       return {
         ...state,
-        displayCostPrice: action.payload.value,
+        display: {
+          ...state.display,
+          costPrice: action.payload.value,
+        },
         lastUpdate: UPDATE_COST_PRICE,
       };
     }
     return state;
   },
   [UPDATE_COST_PRICE_CURRENCY]: (state, action) => {
-    if (!!action.payload) {
+    if (!!action.payload && !!action.payload.label) {
       const newState = {
         ...state,
-        displayCostPriceCurrency: action.payload.label,
-        displayCostPriceCurrencyValue: action.payload.value,
+        display: {
+          ...state.display,
+          costPriceCurrency: action.payload.label,
+          costPriceCurrencyValue: action.payload.value,
+        },
         lastUpdate: UPDATE_COST_PRICE_CURRENCY,
       };
       return recalculateState(newState);
@@ -458,7 +470,10 @@ export const reducer = handleActions<IMarginCalculator, any>({
     if (!!action.payload) {
       return {
         ...state,
-        displayCostPriceCurrencyValue: action.payload.value,
+        display: {
+          ...state.display,
+          costPriceCurrencyValue: action.payload.value,
+        },
         lastUpdate: UPDATE_COST_PRICE_CURRENCY,
       };
     }
@@ -468,18 +483,24 @@ export const reducer = handleActions<IMarginCalculator, any>({
     if (!!action.payload) {
       return {
         ...state,
-        displaySalePrice: action.payload.value,
+        display: {
+          ...state.display,
+          salePrice: action.payload.value,
+        },
         lastUpdate: UPDATE_SALE_PRICE,
       };
     }
     return state;
   },
   [UPDATE_SALE_PRICE_CURRENCY]: (state, action) => {
-    if (!!action.payload) {
+    if (!!action.payload && !!action.payload.label) {
       const newState = {
         ...state,
-        displaySalePriceCurrency: action.payload.label,
-        displaySalePriceCurrencyValue: action.payload.value,
+        display: {
+          ...state.display,
+          salePriceCurrency: action.payload.label,
+          salePriceCurrencyValue: action.payload.value,
+        },
         lastUpdate: UPDATE_SALE_PRICE_CURRENCY,
       };
       return recalculateState(newState);
@@ -490,7 +511,10 @@ export const reducer = handleActions<IMarginCalculator, any>({
     if (!!action.payload) {
       return {
         ...state,
-        displaySalePriceCurrencyValue: action.payload.value,
+        display: {
+          ...state.display,
+          salePriceCurrencyValue: action.payload.value,
+        },
         lastUpdate: UPDATE_SALE_PRICE_CURRENCY,
       };
     }
@@ -500,7 +524,10 @@ export const reducer = handleActions<IMarginCalculator, any>({
     if (!!action.payload) {
       return {
         ...state,
-        displayMargin: action.payload.value,
+        display: {
+          ...state.display,
+          margin: action.payload.value,
+        },
         lastUpdate: UPDATE_MARGIN,
       };
     }
@@ -510,7 +537,10 @@ export const reducer = handleActions<IMarginCalculator, any>({
     if (!!action.payload) {
       return {
         ...state,
-        displayMarkup: action.payload.value,
+        display: {
+          ...state.display,
+          markup: action.payload.value,
+        },
         lastUpdate: UPDATE_MARKUP,
       };
     }
@@ -520,7 +550,10 @@ export const reducer = handleActions<IMarginCalculator, any>({
     if (!!action.payload) {
       return {
         ...state,
-        displayDiscount: action.payload.value,
+        display: {
+          ...state.display,
+          discount: action.payload.value,
+        },
         lastUpdate: UPDATE_DISCOUNT,
       };
     }

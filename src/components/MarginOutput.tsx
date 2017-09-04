@@ -11,7 +11,6 @@ export interface IProps {
 export class MarginOutput extends React.Component<IProps> {
 
   public render() {
-    // TODO
     return (
       <View style={styles.marginOutputContainer}>
         <TouchableHighlight

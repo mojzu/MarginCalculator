@@ -3,7 +3,6 @@ import { IPropsState, IPropsDispatch, MarginForm } from "../components/MarginFor
 import { IStoreState } from "../store";
 import {
   IUpdate,
-  IUpdateCurrency,
   reset,
   recalculate,
   updateCostPrice,
@@ -26,10 +25,10 @@ function mapDispatchToProps(dispatch: Dispatch<any>): IPropsDispatch {
     reset: () => dispatch(reset(undefined)),
     recalculate: () => dispatch(recalculate(undefined)),
     updateCostPrice: (payload: IUpdate) => dispatch(updateCostPrice(payload)),
-    updateCostPriceCurrency: (payload: IUpdateCurrency) => dispatch(updateCostPriceCurrency(payload)),
+    updateCostPriceCurrency: (payload: IUpdate) => dispatch(updateCostPriceCurrency(payload)),
     updateCostPriceCurrencyValue: (payload: IUpdate) => dispatch(updateCostPriceCurrencyValue(payload)),
     updateSalePrice: (payload: IUpdate) => dispatch(updateSalePrice(payload)),
-    updateSalePriceCurrency: (payload: IUpdateCurrency) => dispatch(updateSalePriceCurrency(payload)),
+    updateSalePriceCurrency: (payload: IUpdate) => dispatch(updateSalePriceCurrency(payload)),
     updateSalePriceCurrencyValue: (payload: IUpdate) => dispatch(updateSalePriceCurrencyValue(payload)),
     updateMargin: (payload: IUpdate) => dispatch(updateMargin(payload)),
     updateMarkup: (payload: IUpdate) => dispatch(updateMarkup(payload)),
