@@ -72,6 +72,10 @@ import com.android.build.OutputFile
  * ]
  */
 
+project.ext.react = [
+    entryFile: "index.js"
+]
+
 apply from: "../../node_modules/react-native/react.gradle"
 
 /**
@@ -97,8 +101,8 @@ android {
         applicationId "com.mojzunet.margincalculator"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 4
-        versionName "1.0.3"
+        versionCode 5
+        versionName "1.0.4"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
