@@ -3,6 +3,7 @@ import { ActionsObservable, combineEpics } from "redux-observable";
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/observable/of";
 import "rxjs/add/observable/fromPromise";
+import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/mergeMap";
 
@@ -63,9 +64,8 @@ export const ratesRequestEpic = (action$: ActionsObservable<any>) => {
       }
       return Observable.of(defaultState);
     })
-    .map((data) => {
-      return ratesResponse(data);
-    });
+    .map((data) => ratesResponse(data))
+    .catch((error) => Observable.of(ratesResponse(defaultState)));
 };
 
 export const epic = combineEpics(
