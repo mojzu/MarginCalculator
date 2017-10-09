@@ -45,13 +45,13 @@ const explanations = {
 function defaultState(): IMarginCalculator {
   return {
     data: {
-      costPrice: 0,
+      costPrice: NaN,
       costPriceCurrency: 1,
-      salePrice: 0,
+      salePrice: NaN,
       salePriceCurrency: 1,
-      margin: 0,
-      markup: 0,
-      discount: 0,
+      margin: NaN,
+      markup: NaN,
+      discount: NaN,
     },
     display: {
       costPrice: "",
@@ -248,14 +248,14 @@ function recalculateCostPriceFromMarkup(state: IMarginCalculator): void {
 }
 
 function recalculateSalePriceCurrency(state: IMarginCalculator): void {
-  if (!!state.data.salePrice) {
+  if (Number.isFinite(state.data.salePrice)) {
     const salePriceInCurrency = state.data.salePrice * state.data.salePriceCurrency;
     state.display.salePrice = salePriceInCurrency.toFixed(2);
   }
 }
 
 function recalculateCostPriceCurrency(state: IMarginCalculator): void {
-  if (!!state.data.costPrice) {
+  if (Number.isFinite(state.data.costPrice)) {
     const costPriceInCurrency = state.data.costPrice * state.data.costPriceCurrency;
     state.display.costPrice = costPriceInCurrency.toFixed(2);
   }
@@ -283,20 +283,20 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
       newState.data.costPrice = parseFloat(state.display.costPrice);
       newState.explain.costPrice = explanations.youDidThis;
 
-      if (!!newState.data.costPrice) {
+      if (Number.isFinite(newState.data.costPrice)) {
         newState.data.costPrice = newState.data.costPrice * (1 / state.data.costPriceCurrency);
 
-        if (!!newState.data.salePrice) {
+        if (Number.isFinite(newState.data.salePrice)) {
 
           recalculateMargin(newState);
           recalculateMarkup(newState);
 
-        } else if (!!newState.data.margin) {
+        } else if (Number.isFinite(newState.data.margin)) {
 
           recalculateSalePriceFromMargin(newState);
           recalculateMarkup(newState);
 
-        } else if (!!newState.data.markup) {
+        } else if (Number.isFinite(newState.data.markup)) {
 
           recalculateSalePriceFromMarkup(newState);
           recalculateMargin(newState);
@@ -308,14 +308,14 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
     case UPDATE_COST_PRICE_CURRENCY: {
       newState.data.costPriceCurrency = parseFloat(state.display.costPriceCurrencyValue);
 
-      if (!!newState.data.costPriceCurrency) {
-        if (!!newState.data.salePrice) {
-          if (!!newState.data.margin) {
+      if (Number.isFinite(newState.data.costPriceCurrency)) {
+        if (Number.isFinite(newState.data.salePrice)) {
+          if (Number.isFinite(newState.data.margin)) {
 
             recalculateCostPriceFromMargin(newState);
             recalculateMarkup(newState);
 
-          } else if (!!newState.data.markup) {
+          } else if (Number.isFinite(newState.data.markup)) {
 
             recalculateCostPriceFromMarkup(newState);
             recalculateMargin(newState);
@@ -332,20 +332,20 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
       newState.data.salePrice = parseFloat(state.display.salePrice);
       newState.explain.salePrice = explanations.youDidThis;
 
-      if (!!newState.data.salePrice) {
+      if (Number.isFinite(newState.data.salePrice)) {
         newState.data.salePrice = newState.data.salePrice * (1 / state.data.salePriceCurrency);
 
-        if (!!newState.data.costPrice) {
+        if (Number.isFinite(newState.data.costPrice)) {
 
           recalculateMargin(newState);
           recalculateMarkup(newState);
 
-        } else if (!!newState.data.margin) {
+        } else if (Number.isFinite(newState.data.margin)) {
 
           recalculateCostPriceFromMargin(newState);
           recalculateMarkup(newState);
 
-        } else if (!!newState.data.markup) {
+        } else if (Number.isFinite(newState.data.markup)) {
 
           recalculateCostPriceFromMarkup(newState);
           recalculateMargin(newState);
@@ -357,14 +357,14 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
     case UPDATE_SALE_PRICE_CURRENCY: {
       newState.data.salePriceCurrency = parseFloat(state.display.salePriceCurrencyValue);
 
-      if (!!newState.data.salePriceCurrency) {
-        if (!!newState.data.costPrice) {
-          if (!!newState.data.margin) {
+      if (Number.isFinite(newState.data.salePriceCurrency)) {
+        if (Number.isFinite(newState.data.costPrice)) {
+          if (Number.isFinite(newState.data.margin)) {
 
             recalculateSalePriceFromMargin(newState);
             recalculateMarkup(newState);
 
-          } else if (!!newState.data.markup) {
+          } else if (Number.isFinite(newState.data.markup)) {
 
             recalculateSalePriceFromMarkup(newState);
             recalculateMargin(newState);
@@ -381,13 +381,13 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
       newState.data.margin = parseFloat(state.display.margin);
       newState.explain.margin = explanations.youDidThis;
 
-      if (!!newState.data.margin) {
-        if (!!newState.data.costPrice) {
+      if (Number.isFinite(newState.data.margin)) {
+        if (Number.isFinite(newState.data.costPrice)) {
 
           recalculateSalePriceFromMargin(newState);
           recalculateMarkup(newState);
 
-        } else if (!!newState.data.salePrice) {
+        } else if (Number.isFinite(newState.data.salePrice)) {
 
           recalculateCostPriceFromMargin(newState);
           recalculateMarkup(newState);
@@ -400,13 +400,13 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
       newState.data.markup = parseFloat(state.display.markup);
       newState.explain.markup = explanations.youDidThis;
 
-      if (!!newState.data.markup) {
-        if (!!newState.data.costPrice) {
+      if (Number.isFinite(newState.data.markup)) {
+        if (Number.isFinite(newState.data.costPrice)) {
 
           recalculateSalePriceFromMarkup(newState);
           recalculateMargin(newState);
 
-        } else if (!!newState.data.salePrice) {
+        } else if (Number.isFinite(newState.data.salePrice)) {
 
           recalculateCostPriceFromMarkup(newState);
           recalculateMargin(newState);
@@ -422,7 +422,9 @@ function recalculateState(state: IMarginCalculator): IMarginCalculator {
     }
   }
 
-  if (!!newState.data.discount && !!newState.data.costPrice && !!newState.data.salePrice) {
+  if (Number.isFinite(newState.data.discount) &&
+      Number.isFinite(newState.data.costPrice) &&
+      Number.isFinite(newState.data.salePrice)) {
 
     recalculateDiscounted(newState);
 
@@ -439,7 +441,7 @@ export const reducer = handleActions<IMarginCalculator, IUpdate>({
     return recalculateState(state);
   },
   [UPDATE_COST_PRICE]: (state, action) => {
-    if (!!action.payload) {
+    if (action.payload != null) {
       return {
         ...state,
         display: {
@@ -452,7 +454,7 @@ export const reducer = handleActions<IMarginCalculator, IUpdate>({
     return state;
   },
   [UPDATE_COST_PRICE_CURRENCY]: (state, action) => {
-    if (!!action.payload && !!action.payload.label) {
+    if ((action.payload != null) && (action.payload.label != null)) {
       const newState = {
         ...state,
         display: {
@@ -467,7 +469,7 @@ export const reducer = handleActions<IMarginCalculator, IUpdate>({
     return state;
   },
   [UPDATE_COST_PRICE_CURRENCY_VALUE]: (state, action) => {
-    if (!!action.payload) {
+    if (action.payload != null) {
       return {
         ...state,
         display: {
@@ -480,7 +482,7 @@ export const reducer = handleActions<IMarginCalculator, IUpdate>({
     return state;
   },
   [UPDATE_SALE_PRICE]: (state, action) => {
-    if (!!action.payload) {
+    if (action.payload != null) {
       return {
         ...state,
         display: {
@@ -493,7 +495,7 @@ export const reducer = handleActions<IMarginCalculator, IUpdate>({
     return state;
   },
   [UPDATE_SALE_PRICE_CURRENCY]: (state, action) => {
-    if (!!action.payload && !!action.payload.label) {
+    if ((action.payload != null) && (action.payload.label != null)) {
       const newState = {
         ...state,
         display: {
@@ -508,7 +510,7 @@ export const reducer = handleActions<IMarginCalculator, IUpdate>({
     return state;
   },
   [UPDATE_SALE_PRICE_CURRENCY_VALUE]: (state, action) => {
-    if (!!action.payload) {
+    if (action.payload != null) {
       return {
         ...state,
         display: {
@@ -521,7 +523,7 @@ export const reducer = handleActions<IMarginCalculator, IUpdate>({
     return state;
   },
   [UPDATE_MARGIN]: (state, action) => {
-    if (!!action.payload) {
+    if (action.payload != null) {
       return {
         ...state,
         display: {
@@ -534,7 +536,7 @@ export const reducer = handleActions<IMarginCalculator, IUpdate>({
     return state;
   },
   [UPDATE_MARKUP]: (state, action) => {
-    if (!!action.payload) {
+    if (action.payload != null) {
       return {
         ...state,
         display: {
@@ -547,7 +549,7 @@ export const reducer = handleActions<IMarginCalculator, IUpdate>({
     return state;
   },
   [UPDATE_DISCOUNT]: (state, action) => {
-    if (!!action.payload) {
+    if (action.payload != null) {
       return {
         ...state,
         display: {
