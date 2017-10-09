@@ -1,12 +1,12 @@
 import * as React from "react";
-import { Dispatch } from "redux";
-import { Provider } from "react-redux";
-import { AppRegistry, View, StatusBar } from "react-native";
+import { AppRegistry, StatusBar, View } from "react-native";
 import { addNavigationHelpers } from "react-navigation";
+import { Provider } from "react-redux";
 import { connect } from "react-redux";
-import { ratesRequest } from "./store/currencyRates";
-import { IStoreState, configureStore } from "./store";
+import { Dispatch } from "redux";
 import { AppNavigator } from "./navigation";
+import { configureStore, IStoreState } from "./store";
+import { ratesRequest } from "./store/currencyRates";
 import { colours, styles } from "./style";
 
 interface IPropsState {

@@ -1,11 +1,11 @@
 import * as React from "react";
-import { ScrollView, View, Button, Text } from "react-native";
+import { Button, ScrollView, Text, View } from "react-native";
 import { ICurrencyRates } from "../store/currencyRates";
 import { IMarginCalculator, IUpdate } from "../store/marginCalculator";
 import { colours, styles } from "../style";
-import { IExplainModalState, ExplainModal } from "./ExplainModal";
-import { MarginInput } from "./MarginInput";
 import { CurrencyInput } from "./CurrencyInput";
+import { ExplainModal, IExplainModalState } from "./ExplainModal";
+import { MarginInput } from "./MarginInput";
 import { MarginOutput } from "./MarginOutput";
 
 const titles = {

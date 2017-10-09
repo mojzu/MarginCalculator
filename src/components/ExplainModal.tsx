@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Modal, View, TouchableHighlight, Text } from "react-native";
-import { styles, colours } from "../style";
+import { Modal, Text, TouchableHighlight, View } from "react-native";
+import { colours, styles } from "../style";
 
 export interface IExplainModalState {
   visible: boolean;

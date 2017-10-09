@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, Picker, TextInput } from "react-native";
+import { Picker, TextInput, View } from "react-native";
 import { ICurrencyRates } from "../store/currencyRates";
 import { styles } from "../style";
 

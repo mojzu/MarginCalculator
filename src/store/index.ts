@@ -1,8 +1,8 @@
-import { Store, combineReducers, compose, applyMiddleware, createStore } from "redux";
-import { combineEpics, createEpicMiddleware } from "redux-observable";
+import { applyMiddleware, combineReducers, compose, createStore, Store } from "redux";
 import { createLogger } from "redux-logger";
+import { combineEpics, createEpicMiddleware } from "redux-observable";
 import { navigationReducer } from "../navigation";
-import { ICurrencyRates, reducer as currencyRatesReducer, epic as currencyRatesEpic } from "./currencyRates";
+import { epic as currencyRatesEpic, ICurrencyRates, reducer as currencyRatesReducer } from "./currencyRates";
 import { IMarginCalculator, reducer as marginCalculatorReducer } from "./marginCalculator";
 
 export interface IStoreState {

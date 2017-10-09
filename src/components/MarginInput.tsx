@@ -1,6 +1,6 @@
 import * as React from "react";
-import { View, TouchableHighlight, Text, TextInput } from "react-native";
-import { styles, colours } from "../style";
+import { Text, TextInput, TouchableHighlight, View } from "react-native";
+import { colours, styles } from "../style";
 
 export interface IProps {
   text: string;

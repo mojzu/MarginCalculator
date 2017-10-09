@@ -1,11 +1,11 @@
 import { createAction, handleActions } from "redux-actions";
 import { ActionsObservable, combineEpics } from "redux-observable";
-import { Observable } from "rxjs/Observable";
-import "rxjs/add/observable/of";
 import "rxjs/add/observable/fromPromise";
+import "rxjs/add/observable/of";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/mergeMap";
+import { Observable } from "rxjs/Observable";
 
 export interface ICurrencyRates {
   base: string;
