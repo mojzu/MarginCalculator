@@ -101,8 +101,8 @@ android {
         applicationId "com.mojzunet.margincalculator"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 5
-        versionName "1.0.4"
+        versionCode 6
+        versionName "1.0.5"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -117,11 +117,11 @@ android {
     }
     signingConfigs {
       release {
-        if (project.hasProperty('MYAPP_RELEASE_STORE_FILE')) {
-          storeFile file(MYAPP_RELEASE_STORE_FILE)
-          storePassword MYAPP_RELEASE_STORE_PASSWORD
-          keyAlias MYAPP_RELEASE_KEY_ALIAS
-          keyPassword MYAPP_RELEASE_KEY_PASSWORD
+        if (project.hasProperty('MARGIN_CALCULATOR_RELEASE_STORE_FILE')) {
+          storeFile file(MARGIN_CALCULATOR_RELEASE_STORE_FILE)
+          storePassword MARGIN_CALCULATOR_RELEASE_STORE_PASSWORD
+          keyAlias MARGIN_CALCULATOR_RELEASE_KEY_ALIAS
+          keyPassword MARGIN_CALCULATOR_RELEASE_KEY_PASSWORD
         }
       }
     }
