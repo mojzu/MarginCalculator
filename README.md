@@ -1,36 +1,35 @@
-# MarginCalculator
+# Margin Calculator
 
 Margin and markup calculator with currency conversion.
 
 ## Built With
 
--   [React Native](https://facebook.github.io/react-native/)
--   [Redux](http://redux.js.org/docs/introduction/)
--   [Fixer.io](http://fixer.io/)
+- [Ionic](https://ionicframework.com/)
+- [ngrx](https://github.com/ngrx)
 
 ## Developer
 
-Clone repository, install dependencies with `yarn install` and run scripts: `yarn run ...`
-
-| Script      | Description                                                  |
-| ----------- | ------------------------------------------------------------ |
-| `clean`     | Clean compiled files.                                        |
-| `distclean` | Clean and remove Node modules.                               |
-| `tsc[:w]`   | Run [TypeScript](https://www.typescriptlang.org/) compiler.  |
-| `lint`      | Run [TSLint](https://palantir.github.io/tslint/) on project. |
-| `android`   | Run application on Android virtual device.                   |
-| `release`   | Build Android release `APK` file.                            |
-
-For live reload during development run the following commands.
-
 ```Shell
-$ yarn run tsc:w
-$ yarn run android
+# Clone repository and install dependencies.
+$ npm install
+$ cordova platform add android
+# Clean compiled files.
+$ npm run clean
+# Run linter.
+$ npm run lint
+# Ionic serve development web server.
+$ ionic serve
 ```
 
-To upgrade React Native version.
+### Release
+
+- [Deploying](https://ionicframework.com/docs/intro/deploying/)
 
 ```Shell
-$ sudo yarn global add react-native-git-upgrade
-$ react-native-git-upgrade
+# ./release/release.sh
+rm -rf release/app.apk
+ionic cordova build android --prod --release
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore release/my-release-key.jks platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk my-key-alias
+zipalign -v 4 platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk release/app.apk
+apksigner verify release/app.apk
 ```

@@ -1,21 +1,13 @@
 {
-  "extends": [
-    "tslint:recommended",
-    "tslint-react"
-  ],
+  "extends": ["tslint:recommended"],
+  "rulesDirectory": ["node_modules/tslint-eslint-rules/dist/rules"],
   "rules": {
-    "max-classes-per-file": [
-      false
-    ],
+    "max-classes-per-file": [false],
     "no-empty": false,
     "no-empty-interface": false,
     "object-literal-sort-keys": false,
-    "variable-name": [
-      true,
-      "ban-keywords",
-      "check-format",
-      "allow-leading-underscore",
-      "allow-pascal-case"
-    ]
+    "no-duplicate-variable": true,
+    "trailing-comma": false,
+    "no-unused-variable": [true]
   }
 }

@@ -1,0 +1,7 @@
+{
+  "name": "Margin Calculator",
+  "type": "ionic-angular",
+  "integrations": {
+    "cordova": {}
+  }
+}
