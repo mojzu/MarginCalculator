@@ -1,3 +1,4 @@
+import { HttpClientModule } from "@angular/common/http";
 import { ErrorHandler, NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { SplashScreen } from "@ionic-native/splash-screen";
@@ -15,6 +16,7 @@ import { MyApp } from "./app.component";
   declarations: [MyApp, CalculatorPage],
   imports: [
     BrowserModule,
+    HttpClientModule,
     IonicModule.forRoot(MyApp),
     IonicStorageModule.forRoot(),
     StoreModule.forRoot(reducers, { initialState }),

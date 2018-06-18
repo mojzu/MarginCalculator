@@ -1,13 +1,19 @@
 import { Action } from "@ngrx/store";
 
+export interface ICurrenciesRates {
+  [key: string]: number;
+}
+
 export interface IState {
   time: string;
-  currenciesRates: { [key: string]: number };
+  currenciesRates: ICurrenciesRates;
+  error: any;
 }
 
 export const initialState: IState = {
   time: "2018-06-18",
-  currenciesRates: { EUR: 1.0 }
+  currenciesRates: { EUR: 1.0 },
+  error: undefined
 };
 
 export enum EActions {
@@ -22,7 +28,7 @@ export class GetRequest implements Action {
 
 export class GetResponse implements Action {
   public readonly type = EActions.GetResponse;
-  public constructor(public readonly payload: { currencies: IState }) {}
+  public constructor(public readonly payload: { time: string; currenciesRates: ICurrenciesRates }) {}
 }
 
 export class GetError implements Action {
@@ -34,8 +40,18 @@ export type IActionsUnion = GetRequest | GetResponse | GetError;
 
 export function reducer(state: IState = initialState, action: IActionsUnion): IState {
   switch (action.type) {
+    case EActions.GetResponse: {
+      return {
+        ...state,
+        time: action.payload.time,
+        currenciesRates: { ...state.currenciesRates, ...action.payload.currenciesRates }
+      };
+    }
+    case EActions.GetError: {
+      return { ...state, error: action.payload.error };
+    }
     default: {
-      return state;
+      return { ...state };
     }
   }
 }

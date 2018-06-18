@@ -3,9 +3,97 @@
     <ion-title>
       Margin Calculator
     </ion-title>
+    <ion-buttons end>
+      <button ion-button color="light" (click)="onResetClick()">
+        Reset
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  Hello, world!
+<ion-content>
+  <form [formGroup]="form">
+
+    <ion-card>
+      <ion-list>
+        <ion-item>
+          <ion-label color="primary">Cost Price</ion-label>
+          <ion-input formControlName="costPrice" (change)="onCostPriceChange($event)" text-right type="text" placeholder="Enter a cost price value"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Currency</ion-label>
+          <ion-select formControlName="costPriceCurrency" (change)="onCostPriceCurrencyChange($event)" text-right>
+            <ion-option *ngFor="let item of currenciesRates$ | async" [value]="item.value">{{ item.label }}</ion-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Currency Rate</ion-label>
+          <ion-input formControlName="costPriceCurrencyRate" (change)="onCostPriceCurrencyRateChange($event)" text-right type="text"></ion-input>
+        </ion-item>
+      </ion-list>
+    </ion-card>
+
+    <ion-card>
+      <ion-list>
+        <ion-item>
+          <ion-label color="primary">Sale Price</ion-label>
+          <ion-input formControlName="salePrice" (change)="onSalePriceChange($event)" text-right type="text" placeholder="Enter a sale price value"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Currency</ion-label>
+          <ion-select formControlName="salePriceCurrency" (change)="onSalePriceCurrencyChange($event)" text-right>
+            <ion-option *ngFor="let item of currenciesRates$ | async" [value]="item.value">{{ item.label }}</ion-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Currency Rate</ion-label>
+          <ion-input formControlName="salePriceCurrencyRate" (change)="onSalePriceCurrencyRateChange($event)" text-right type="text"></ion-input>
+        </ion-item>
+      </ion-list>
+    </ion-card>
+
+    <ion-card>
+      <ion-list>
+        <ion-item>
+          <ion-label color="primary">Margin (%)</ion-label>
+          <ion-input formControlName="margin" (change)="onMarginChange($event)" text-right type="text" placeholder="Enter a margin value"></ion-input>
+        </ion-item>
+      </ion-list>
+    </ion-card>
+
+    <ion-card>
+      <ion-list>
+        <ion-item>
+          <ion-label color="primary">Markup (%)</ion-label>
+          <ion-input formControlName="markup" (change)="onMarkupChange($event)" text-right type="text" placeholder="Enter a markup value"></ion-input>
+        </ion-item>
+      </ion-list>
+    </ion-card>
+
+    <ion-card>
+      <ion-list>
+        <ion-item>
+          <ion-label color="primary">Discount (%)</ion-label>
+          <ion-input formControlName="discount" (change)="onDiscountChange($event)" text-right type="text" placeholder="Enter a discount value"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label>Discounted Sale Price</ion-label>
+          <ion-input formControlName="discountedSalePrice" text-right type="text" readonly="true"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label>Discounted Margin</ion-label>
+          <ion-input formControlName="discountedMargin" text-right type="text" readonly="true"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label>Discounted Markup</ion-label>
+          <ion-input formControlName="discountedMarkup" text-right type="text" readonly="true"></ion-input>
+        </ion-item>
+      </ion-list>
+    </ion-card>
+
+  </form>
 </ion-content>
