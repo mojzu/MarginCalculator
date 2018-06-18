@@ -2,9 +2,9 @@ import { Component } from "@angular/core";
 import { NavController } from "ionic-angular";
 
 @Component({
-  selector: "page-margin-calculator",
-  templateUrl: "margin-calculator.html"
+  selector: "page-calculator",
+  templateUrl: "calculator.html"
 })
-export class MarginCalculatorPage {
+export class CalculatorPage {
   constructor(public navCtrl: NavController) {}
 }
