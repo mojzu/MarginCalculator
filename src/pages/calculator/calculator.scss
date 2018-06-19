@@ -1,1 +1,8 @@
-page-calculator {}
+page-calculator {
+  .calculator-content {
+    background-color: map-get($colors, dark);
+  }
+  .calculator-label-title {
+    font-weight: bold;
+  }
+}

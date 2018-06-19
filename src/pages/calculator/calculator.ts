@@ -1,11 +1,12 @@
 import { Component, OnDestroy } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { NavController } from "ionic-angular";
-import { has } from "lodash";
+import { get, has } from "lodash";
 import { Observable, Subject } from "rxjs";
 import { map, takeUntil } from "rxjs/operators";
 import { StoreProvider } from "../../providers/store/store";
 import * as Calculator from "../../store/calculator";
+import * as Currencies from "../../store/currencies";
 
 export interface ICurrencyCode {
   key: string;
@@ -62,6 +63,7 @@ export class CalculatorPage implements OnDestroy {
   public readonly currenciesRates$: Observable<ICurrencySelect[]>;
 
   protected readonly unsubscribe$ = new Subject<void>();
+  protected rates: Currencies.ICurrenciesRates = {};
 
   public constructor(
     protected readonly formBuilder: FormBuilder,
@@ -91,6 +93,7 @@ export class CalculatorPage implements OnDestroy {
 
     this.currenciesRates$ = this.store.select((state) => state.currencies.currenciesRates).pipe(
       map((currenciesRates) => {
+        this.rates = currenciesRates;
         const selectItems: ICurrencySelect[] = [];
         currencyCodeTable.map((item) => {
           if (has(currenciesRates, item.key)) {
@@ -112,29 +115,65 @@ export class CalculatorPage implements OnDestroy {
   }
 
   public onCostPriceChange(event?: object): void {
+    const value = get(event || {}, "target.value", undefined);
+    if (value != null) {
+      this.store.dispatch(new Calculator.UpdateCostPrice({ value }));
+    }
   }
 
-  public onCostPriceCurrencyChange(event?: object): void {
+  public onCostPriceCurrencyChange(key?: string): void {
+    if (key != null) {
+      const value = get(this.rates, key, 1).toFixed(4);
+      this.store.dispatch(new Calculator.UpdateCostPriceCurrency({ key, value }));
+    }
   }
 
   public onCostPriceCurrencyRateChange(event?: object): void {
+    const value = get(event || {}, "target.value", undefined);
+    if (value != null) {
+      this.store.dispatch(new Calculator.UpdateCostPriceCurrencyRate({ value }));
+    }
   }
 
   public onSalePriceChange(event?: object): void {
+    const value = get(event || {}, "target.value", undefined);
+    if (value != null) {
+      this.store.dispatch(new Calculator.UpdateSalePrice({ value }));
+    }
   }
 
-  public onSalePriceCurrencyChange(event?: object): void {
+  public onSalePriceCurrencyChange(key?: string): void {
+    if (key != null) {
+      const value = get(this.rates, key, 1).toFixed(4);
+      this.store.dispatch(new Calculator.UpdateSalePriceCurrency({ key, value }));
+    }
   }
 
   public onSalePriceCurrencyRateChange(event?: object): void {
+    const value = get(event || {}, "target.value", undefined);
+    if (value != null) {
+      this.store.dispatch(new Calculator.UpdateSalePriceCurrencyRate({ value }));
+    }
   }
 
   public onMarginChange(event?: object): void {
+    const value = get(event || {}, "target.value", undefined);
+    if (value != null) {
+      this.store.dispatch(new Calculator.UpdateMargin({ value }));
+    }
   }
 
   public onMarkupChange(event?: object): void {
+    const value = get(event || {}, "target.value", undefined);
+    if (value != null) {
+      this.store.dispatch(new Calculator.UpdateMarkup({ value }));
+    }
   }
 
   public onDiscountChange(event?: object): void {
+    const value = get(event || {}, "target.value", undefined);
+    if (value != null) {
+      this.store.dispatch(new Calculator.UpdateDiscount({ value }));
+    }
   }
 }

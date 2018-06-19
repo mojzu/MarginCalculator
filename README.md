@@ -6,6 +6,7 @@ Margin and markup calculator with currency conversion.
 
 - [Ionic](https://ionicframework.com/)
 - [ngrx](https://github.com/ngrx)
+- [ECB Exchange Rates](https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html)
 
 ## Developer
 

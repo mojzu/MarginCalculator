@@ -16,7 +16,6 @@ export class StoreProvider {
   @Effect()
   public effectsInit$: Observable<Action> = this.actions$.pipe(
     ofType("@ngrx/effects/init"),
-    // TODO(M): Caching handling here?
     map(() => new Currencies.GetRequest())
   );
 
@@ -42,8 +41,9 @@ export class StoreProvider {
   }
 
   protected currenciesGetRequest(): Observable<Action> {
-    // TODO(M): Caching handling here?
-    return this.http.get("/api/eurofxref-daily.xml", { responseType: "text" }).pipe(
+    // // Proxy API requests in development to fix CORS error.
+    // return this.http.get("/api/eurofxref-daily.xml", { responseType: "text" }).pipe(
+    return this.http.get("http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml", { responseType: "text" }).pipe(
       mergeMap((response) => Observable.fromPromise(this.parseXml(response))),
       map((response) => {
         // Extract time and currencies rates data.
