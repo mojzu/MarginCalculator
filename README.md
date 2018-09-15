@@ -34,3 +34,17 @@ jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore release/my-rele
 zipalign -v 4 platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk release/app.apk
 apksigner verify release/app.apk
 ```
+
+TODO(H): Ionic 4 upgrade.
+
+### Android Studio
+
+Add to `.bashrc`.
+
+```Shell
+# Android SDK tools.
+export ANDROID_HOME="/home/$USER/Android/Sdk"
+export ANDROID_STUDIO="/home/$USER/android-studio"
+export PATH="$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/28.0.2:$ANDROID_STUDIO/gradle/gradle-4.4/bin"
+export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
+```
