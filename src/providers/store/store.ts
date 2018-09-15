@@ -80,38 +80,40 @@ export class StoreProvider {
   protected currenciesGetRequest(): Observable<Action> {
     // // Proxy API requests in development to fix CORS error.
     // return this.http.get("/api/eurofxref-daily.xml", { responseType: "text" }).pipe(
-    return this.http.get("http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml", { responseType: "text" }).pipe(
-      mergeMap((response) => Observable.fromPromise(this.parseXml(response))),
-      map((response) => {
-        // Extract time and currencies rates data.
-        const time: string = get(response, "gesmes:Envelope.Cube.0.Cube.0.$.time", undefined);
-        const timeIsValid = time != null && isString(time);
-        const data: object[] = get(response, "gesmes:Envelope.Cube.0.Cube.0.Cube", undefined);
-        const dataIsValid = data != null && isArray(data);
-        if (!timeIsValid || !dataIsValid) {
-          throw new Error("Failed to parse currencies rates.");
-        }
-
-        // Extract currencies:rates dictionary from data array.
-        const currenciesRates: Currencies.ICurrenciesRates = {};
-        data.map((value) => {
-          const currency: string = get(value, "$.currency", undefined);
-          const currencyIsValid = currency != null && isString(currency);
-          const rate: string = get(value, "$.rate", undefined);
-          const rateIsValid = rate != null && isString(rate);
-          if (!currencyIsValid || !rateIsValid) {
+    return this.http
+      .get("https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml", { responseType: "text" })
+      .pipe(
+        mergeMap((response) => Observable.fromPromise(this.parseXml(response))),
+        map((response) => {
+          // Extract time and currencies rates data.
+          const time: string = get(response, "gesmes:Envelope.Cube.0.Cube.0.$.time", undefined);
+          const timeIsValid = time != null && isString(time);
+          const data: object[] = get(response, "gesmes:Envelope.Cube.0.Cube.0.Cube", undefined);
+          const dataIsValid = data != null && isArray(data);
+          if (!timeIsValid || !dataIsValid) {
             throw new Error("Failed to parse currencies rates.");
           }
-          currenciesRates[currency] = isFloat(rate);
-        });
 
-        // Currencies rates response action.
-        return new Currencies.GetResponse({ time, currenciesRates });
-      }),
-      catchError((error: any) => {
-        return Observable.of(new Currencies.GetError({ error }));
-      })
-    );
+          // Extract currencies:rates dictionary from data array.
+          const currenciesRates: Currencies.ICurrenciesRates = {};
+          data.map((value) => {
+            const currency: string = get(value, "$.currency", undefined);
+            const currencyIsValid = currency != null && isString(currency);
+            const rate: string = get(value, "$.rate", undefined);
+            const rateIsValid = rate != null && isString(rate);
+            if (!currencyIsValid || !rateIsValid) {
+              throw new Error("Failed to parse currencies rates.");
+            }
+            currenciesRates[currency] = isFloat(rate);
+          });
+
+          // Currencies rates response action.
+          return new Currencies.GetResponse({ time, currenciesRates });
+        }),
+        catchError((error: any) => {
+          return Observable.of(new Currencies.GetError({ error }));
+        })
+      );
   }
 
   protected currenciesGetResponse(action: Currencies.GetResponse): Observable<Action> {
