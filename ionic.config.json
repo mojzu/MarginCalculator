@@ -1,13 +1,13 @@
 {
   "name": "Margin Calculator",
-  "type": "ionic-angular",
   "integrations": {
     "cordova": {}
   },
+  "type": "ionic-angular",
   "proxies": [
     {
       "path": "/api",
-      "proxyUrl": "http://www.ecb.europa.eu/stats/eurofxref"
+      "proxyUrl": "https://www.ecb.europa.eu/stats/eurofxref"
     }
   ]
 }
