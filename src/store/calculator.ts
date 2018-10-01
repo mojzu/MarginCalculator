@@ -161,7 +161,21 @@ export type IActionsUnion =
 export function reducer(state: IState = initialState, action: IActionsUnion): IState {
   switch (action.type) {
     case EActions.Reset: {
-      return { ...initialState };
+      return {
+        ...initialState,
+        data: {
+          ...initialState.data,
+          costPriceCurrency: state.data.costPriceCurrency,
+          salePriceCurrency: state.data.salePriceCurrency
+        },
+        display: {
+          ...initialState.display,
+          costPriceCurrency: state.display.costPriceCurrency,
+          costPriceCurrencyRate: state.display.costPriceCurrencyRate,
+          salePriceCurrency: state.display.salePriceCurrency,
+          salePriceCurrencyRate: state.display.salePriceCurrencyRate
+        }
+      };
     }
     case EActions.UpdateCostPrice: {
       const nextState = {
