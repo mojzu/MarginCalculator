@@ -1,9 +1,7 @@
 {
   "name": "Margin Calculator",
-  "integrations": {
-    "cordova": {}
-  },
-  "type": "ionic-angular",
+  "integrations": {},
+  "type": "angular",
   "proxies": [
     {
       "path": "/api",

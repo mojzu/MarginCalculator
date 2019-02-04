@@ -13,13 +13,16 @@ Margin and markup calculator with currency conversion.
 ```Shell
 # Clone repository and install dependencies.
 $ npm install
-$ cordova platform add android
-# Clean compiled files.
-$ npm run clean
+$ npx cap sync
 # Run linter.
 $ npm run lint
 # Ionic serve development web server.
-$ ionic serve
+$ npm run start
+# Ionic build (for production).
+$ npm run build|build-prod
+$ npx cap copy
+# Android Studio.
+$ npx cap open android
 ```
 
 ### Release

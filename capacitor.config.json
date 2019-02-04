@@ -1,0 +1,6 @@
+{
+  "appId": "com.mojzunet.margincalculator",
+  "appName": "Margin Calculator",
+  "bundledWebRuntime": false,
+  "webDir": "www"
+}
