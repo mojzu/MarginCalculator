@@ -1,29 +1,19 @@
-import { HttpClientModule } from "@angular/common/http";
-import { ErrorHandler, NgModule } from "@angular/core";
-import { BrowserModule } from "@angular/platform-browser";
-import { SplashScreen } from "@ionic-native/splash-screen";
-import { StatusBar } from "@ionic-native/status-bar";
-import { IonicStorageModule } from "@ionic/storage";
-import { EffectsModule } from "@ngrx/effects";
-import { StoreModule } from "@ngrx/store";
-import { IonicApp, IonicErrorHandler, IonicModule } from "ionic-angular";
-import { CalculatorPage } from "../pages/calculator/calculator";
-import { StoreProvider } from "../providers/store/store";
-import { initialState, reducers } from "../store";
-import { MyApp } from "./app.component";
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { RouteReuseStrategy } from '@angular/router';
+
+import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+
+import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
-  declarations: [MyApp, CalculatorPage],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    IonicModule.forRoot(MyApp),
-    IonicStorageModule.forRoot(),
-    StoreModule.forRoot(reducers, { initialState }),
-    EffectsModule.forRoot([StoreProvider])
+  declarations: [AppComponent],
+  entryComponents: [],
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
+  providers: [
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
-  bootstrap: [IonicApp],
-  entryComponents: [MyApp, CalculatorPage],
-  providers: [StatusBar, SplashScreen, { provide: ErrorHandler, useClass: IonicErrorHandler }, StoreProvider]
+  bootstrap: [AppComponent]
 })
 export class AppModule {}

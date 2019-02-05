@@ -8,7 +8,7 @@
     "ng": "NODE_OPTIONS=\"--max-old-space-size=4096\" ng",
     "start": "NODE_OPTIONS=\"--max-old-space-size=4096\" ionic serve",
     "build": "NODE_OPTIONS=\"--max-old-space-size=4096\" ionic build",
-    "build-prod": "NODE_OPTIONS=\"--max-old-space-size=4096\" ionic build --prod",
+    "build-android": "NODE_OPTIONS=\"--max-old-space-size=4096\" ionic build --prod && npx cap copy android",
     "ng-build": "NODE_OPTIONS=\"--max-old-space-size=4096\" ng build",
     "test": "NODE_OPTIONS=\"--max-old-space-size=4096\" ng test",
     "lint": "NODE_OPTIONS=\"--max-old-space-size=4096\" ng lint",

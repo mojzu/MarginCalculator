@@ -1,0 +1,9 @@
+{
+  "name": "Margin Calculator",
+  "short_name": "Margin Calculator",
+  "start_url": "index.html",
+  "display": "standalone",
+  "icons": [],
+  "background_color": "#333399",
+  "theme_color": "#333399"
+}

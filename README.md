@@ -21,8 +21,14 @@ $ npm run start
 # Ionic build (for production).
 $ npm run build|build-prod
 $ npx cap copy
-# Android Studio.
-$ npx cap open android
+# Android release.
+$ npm run build-android
+$ npx cap update
+# Build signed APK using Android Studio.
+# (Android Studio) Build -> Generate Signed APK...
+# (Android Studio) Select "keystore.jks", key alias "margin-calculator".
+# (Android Studio) Select build type, all signature versions.
+# (Android Studio) Build output in "android/app/release/app-release.apk"
 ```
 
 ### Release
