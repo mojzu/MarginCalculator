@@ -1,7 +1,0 @@
-# Git ignored files.
-# <http://git-scm.com/docs/gitignore>
-/.deprecated
-/node_modules
-/release
-/www
-*.log
