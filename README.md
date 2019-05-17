@@ -1,6 +1,6 @@
 # Margin Calculator
 
-Margin and markup calculator with currency conversion.
+Margin and markup calculator with currency conversion and discount.
 
 ## Built With
 

@@ -12,39 +12,19 @@ void main() {
   runApp(
     ScopedModel<CalculatorModel>(
       model: calculator,
-      child: _App(model: calculator),
+      child: _App(),
     ),
   );
 }
 
-class _App extends StatefulWidget {
+class _App extends StatelessWidget {
   const _App({
     Key key,
-    @required this.model,
   }) : super(key: key);
-  final CalculatorModel model;
-
-  @override
-  _AppState createState() => new _AppState(model);
-}
-
-class _AppState extends State<_App> {
-  _AppState(
-    this.model,
-  );
-  final CalculatorModel model;
-  Future<void> fetch;
-
-  @override
-  void initState() {
-    fetch = model.fetchCurrenciesRates().then((_) {
-      setState(() {});
-    });
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
+    var model = CalculatorModel.of(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Margin Calculator',
@@ -53,19 +33,7 @@ class _AppState extends State<_App> {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => FutureBuilder(
-              future: fetch,
-              builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.none:
-                  case ConnectionState.waiting:
-                    return Center(child: new CircularProgressIndicator());
-                  default:
-                    // TODO: Handle error.
-                    return Calculator();
-                }
-              },
-            ),
+        '/': (context) => Calculator(model: model),
       },
     );
   }

@@ -10,20 +10,52 @@ class Currency {
   String rate;
 }
 
+enum _Action {
+  Reset,
+  SetCostPrice,
+  SetCostPriceCurrency,
+  SetSalePrice,
+  SetSalePriceCurrency,
+  SetMargin,
+  SetMarkup,
+  SetDiscount,
+}
+
+const explainNothingHere = "Nothing here... awkward turtle-duck.";
+const explainYouDidThis = "You did this!";
+
 class CalculatorModel extends Model {
   CalculatorModel();
 
-  static CalculatorModel of(BuildContext context) =>
-      ScopedModel.of<CalculatorModel>(context);
+  static CalculatorModel of(BuildContext context) => ScopedModel.of<CalculatorModel>(context);
 
   List<Currency> _currencies = [];
   String _costPrice = "";
+  double _costPriceValue = double.nan;
   String _costPriceCurrency = "EUR";
+  double _costPriceCurrencyRate = double.nan;
   String _salePrice = "";
+  double _salePriceValue = double.nan;
   String _salePriceCurrency = "EUR";
+  double _salePriceCurrencyRate = double.nan;
   String _margin = "";
+  double _marginValue = double.nan;
   String _markup = "";
+  double _markupValue = double.nan;
   String _discount = "";
+  double _discountValue = double.nan;
+  String _discountSalePrice = "";
+  String _discountMargin = "";
+  String _discountMarkup = "";
+
+  String _explainCostPrice = explainNothingHere;
+  String _explainSalePrice = explainNothingHere;
+  String _explainMargin = explainNothingHere;
+  String _explainMarkup = explainNothingHere;
+  String _explainDiscount = explainNothingHere;
+  String _explainDiscountSalePrice = explainNothingHere;
+  String _explainDiscountMargin = explainNothingHere;
+  String _explainDiscountMarkup = explainNothingHere;
 
   List<Currency> get currencies => _currencies;
   String get costPrice => _costPrice;
@@ -33,60 +65,99 @@ class CalculatorModel extends Model {
   String get margin => _margin;
   String get markup => _markup;
   String get discount => _discount;
+  String get discountSalePrice => _discountSalePrice;
+  String get discountMargin => _discountMargin;
+  String get discountMarkup => _discountMarkup;
+
+  String get explainCostPrice => _explainCostPrice;
+  String get explainSalePrice => _explainSalePrice;
+  String get explainMargin => _explainMargin;
+  String get explainMarkup => _explainMarkup;
+  String get explainDiscount => _explainDiscount;
+  String get explainDiscountSalePrice => _explainDiscountSalePrice;
+  String get explainDiscountMargin => _explainDiscountMargin;
+  String get explainDiscountMarkup => _explainDiscountMarkup;
 
   reset() {
-    print("TODO: Reset");
-    _costPrice = "";
-    _salePrice = "";
-    _margin = "";
-    _markup = "";
-    _discount = "";
-    notifyListeners();
+    _recalculate(_Action.Reset);
   }
 
   setCostPrice(String value) {
     _costPrice = value;
-    notifyListeners();
+    _recalculate(_Action.SetCostPrice);
   }
 
   setCostPriceCurrency(String value) {
     _costPriceCurrency = value;
-    notifyListeners();
+    _recalculate(_Action.SetCostPriceCurrency);
   }
 
   setCostPriceCurrencyRate(String value) {
     _setCurrencyRate(_costPriceCurrency, value);
-    notifyListeners();
+    _recalculate(_Action.SetCostPriceCurrency);
   }
 
   setSalePrice(String value) {
     _salePrice = value;
-    notifyListeners();
+    _recalculate(_Action.SetSalePrice);
   }
 
   setSalePriceCurrency(String value) {
     _salePriceCurrency = value;
-    notifyListeners();
+    _recalculate(_Action.SetSalePriceCurrency);
   }
 
   setSalePriceCurrencyRate(String value) {
     _setCurrencyRate(_salePriceCurrency, value);
-    notifyListeners();
+    _recalculate(_Action.SetSalePriceCurrency);
   }
 
   setMargin(String value) {
     _margin = value;
-    notifyListeners();
+    _recalculate(_Action.SetMargin);
   }
 
   setMarkup(String value) {
     _markup = value;
-    notifyListeners();
+    _recalculate(_Action.SetMarkup);
   }
 
   setDiscount(String value) {
     _discount = value;
-    notifyListeners();
+    _recalculate(_Action.SetDiscount);
+  }
+
+  Future<String> fetchCurrenciesRates() async {
+    var date = _defaultCurrenciesRatesDate();
+    _defaultCurrenciesRates();
+
+    try {
+      final response = await http.get('https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml');
+      if (response.statusCode == 200) {
+        final document = xml.parse(response.body);
+        for (var element in document.findAllElements("Cube")) {
+          var time = element.getAttribute("time");
+          var currency = element.getAttribute("currency");
+          var rate = element.getAttribute("rate");
+
+          if (time != null) {
+            date = time;
+          } else if (currency != null) {
+            _setCurrencyRate(currency, rate);
+          }
+        }
+      } else {
+        // TODO: Log fetch failure.
+      }
+    } catch (error) {}
+
+    _recalculate(_Action.SetCostPriceCurrency);
+    _recalculate(_Action.SetSalePriceCurrency);
+    return date;
+  }
+
+  String _defaultCurrenciesRatesDate() {
+    return "2019-05-15";
   }
 
   _defaultCurrenciesRates() {
@@ -127,22 +198,6 @@ class CalculatorModel extends Model {
     ];
   }
 
-  // TODO: Currency conversion support.
-  Future<void> fetchCurrenciesRates() async {
-    _defaultCurrenciesRates();
-    notifyListeners();
-
-    // final response = await http
-    //     .get('https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml');
-    // if (response.statusCode == 200) {
-    //   final document = xml.parse(response.body);
-    //   print(document.findAllElements("Cube"));
-    // } else {
-    //   print("TODO: Handle fetch failure");
-    //   print(response.body);
-    // }
-  }
-
   Currency _getCurrency(String code) {
     for (var currency in _currencies) {
       if (currency.code == code) {
@@ -158,5 +213,288 @@ class CalculatorModel extends Model {
         currency.rate = rate;
       }
     }
+  }
+
+  _recalculate(_Action action) {
+    switch (action) {
+      case _Action.Reset:
+        _costPrice = "";
+        _costPriceValue = double.nan;
+        _salePrice = "";
+        _salePriceValue = double.nan;
+        _margin = "";
+        _marginValue = double.nan;
+        _markup = "";
+        _markupValue = double.nan;
+        _discount = "";
+        _discountValue = double.nan;
+        _discountSalePrice = "";
+        _discountMargin = "";
+        _discountMarkup = "";
+
+        _explainCostPrice = explainNothingHere;
+        _explainSalePrice = explainNothingHere;
+        _explainMargin = explainNothingHere;
+        _explainMarkup = explainNothingHere;
+        _explainDiscount = explainNothingHere;
+        _explainDiscountSalePrice = explainNothingHere;
+        _explainDiscountMargin = explainNothingHere;
+        _explainDiscountMarkup = explainNothingHere;
+        break;
+      case _Action.SetCostPrice:
+        _costPriceValue = double.tryParse(_costPrice) ?? double.nan;
+        _explainCostPrice = explainYouDidThis;
+
+        if (_costPriceValue.isFinite) {
+          _costPriceValue = _costPriceValue * (1 / _costPriceCurrencyRate);
+
+          if (_salePriceValue.isFinite) {
+            _recalculateMargin();
+            _recalculateMarkup();
+          } else if (_marginValue.isFinite) {
+            _recalculateSalePriceFromMargin();
+            _recalculateMarkup();
+          } else if (_markupValue.isFinite) {
+            _recalculateSalePriceFromMarkup();
+            _recalculateMargin();
+          }
+        }
+        break;
+      case _Action.SetCostPriceCurrency:
+        var currency = _getCurrency(_costPriceCurrency);
+        _costPriceCurrencyRate = double.tryParse(currency.rate) ?? double.nan;
+
+        if (_costPriceCurrencyRate.isFinite) {
+          if (_salePriceValue.isFinite) {
+            if (_marginValue.isFinite) {
+              _recalculateCostPriceFromMargin();
+              _recalculateMarkup();
+            } else if (_markupValue.isFinite) {
+              _recalculateCostPriceFromMarkup();
+              _recalculateMargin();
+            }
+          }
+
+          _recalculateCostPriceCurrency();
+        }
+        break;
+      case _Action.SetSalePrice:
+        _salePriceValue = double.tryParse(_salePrice) ?? double.nan;
+        _explainSalePrice = explainYouDidThis;
+
+        if (_salePriceValue.isFinite) {
+          _salePriceValue = _salePriceValue * (1 / _salePriceCurrencyRate);
+
+          if (_costPriceValue.isFinite) {
+            _recalculateMargin();
+            _recalculateMarkup();
+          } else if (_marginValue.isFinite) {
+            _recalculateCostPriceFromMargin();
+            _recalculateMarkup();
+          } else if (_markupValue.isFinite) {
+            _recalculateCostPriceFromMarkup();
+            _recalculateMargin();
+          }
+        }
+        break;
+      case _Action.SetSalePriceCurrency:
+        var currency = _getCurrency(_salePriceCurrency);
+        _salePriceCurrencyRate = double.tryParse(currency.rate) ?? double.nan;
+
+        if (_salePriceCurrencyRate.isFinite) {
+          if (_costPriceValue.isFinite) {
+            if (_marginValue.isFinite) {
+              _recalculateSalePriceFromMargin();
+              _recalculateMarkup();
+            } else if (_markupValue.isFinite) {
+              _recalculateSalePriceFromMarkup();
+              _recalculateMargin();
+            }
+          }
+          _recalculateSalePriceCurrency();
+        }
+        break;
+      case _Action.SetMargin:
+        _marginValue = double.tryParse(_margin) ?? double.nan;
+        _explainMargin = explainYouDidThis;
+
+        if (_marginValue.isFinite) {
+          if (_costPriceValue.isFinite) {
+            _recalculateSalePriceFromMargin();
+            _recalculateMarkup();
+          } else if (_salePriceValue.isFinite) {
+            _recalculateCostPriceFromMargin();
+            _recalculateMarkup();
+          }
+        }
+        break;
+      case _Action.SetMarkup:
+        _markupValue = double.tryParse(_markup) ?? double.nan;
+        _explainMarkup = explainYouDidThis;
+
+        if (_markupValue.isFinite) {
+          if (_costPriceValue.isFinite) {
+            _recalculateSalePriceFromMarkup();
+            _recalculateMargin();
+          } else if (_salePriceValue.isFinite) {
+            _recalculateCostPriceFromMarkup();
+            _recalculateMargin();
+          }
+        }
+        break;
+      case _Action.SetDiscount:
+        _discountValue = double.tryParse(_discount) ?? double.nan;
+        _explainDiscount = explainYouDidThis;
+        break;
+    }
+
+    if (_discountValue.isFinite && _costPriceValue.isFinite && _salePriceValue.isFinite) {
+      _recalculateDiscount();
+    }
+
+    notifyListeners();
+  }
+
+  _recalculateMargin() {
+    _marginValue = ((_salePriceValue - _costPriceValue) / _salePriceValue) * 100;
+    _margin = _marginValue.toStringAsFixed(2);
+    _explainMargin = _recalculateExplainMargin(_salePriceValue);
+  }
+
+  _recalculateMarkup() {
+    _markupValue = ((_salePriceValue - _costPriceValue) / _costPriceValue) * 100;
+    _markup = _markupValue.toStringAsFixed(2);
+    _explainMarkup = _recalculateExplainMarkup(_salePriceValue);
+  }
+
+  _recalculateSalePriceFromMargin() {
+    _salePriceValue = _costPriceValue / (1 - _marginValue / 100);
+    _recalculateSalePriceCurrency();
+    _explainSalePrice = _recalculateExplainSalePriceFromMargin();
+  }
+
+  _recalculateSalePriceFromMarkup() {
+    _salePriceValue = _costPriceValue * (_markupValue / 100) + _costPriceValue;
+    _recalculateSalePriceCurrency();
+    _explainSalePrice = _recalculateExplainSalePriceFromMarkup();
+  }
+
+  _recalculateCostPriceFromMargin() {
+    _costPriceValue = _salePriceValue - (_marginValue / 100) * _salePriceValue;
+    _recalculateCostPriceCurrency();
+    _explainCostPrice = _recalculateExplainCostPriceFromMargin();
+  }
+
+  _recalculateCostPriceFromMarkup() {
+    _costPriceValue = _salePriceValue / (_markupValue / 100 + 1);
+    _recalculateCostPriceCurrency();
+    _explainCostPrice = _recalculateExplainCostPriceFromMarkup();
+  }
+
+  _recalculateSalePriceCurrency() {
+    if (_salePriceValue.isFinite) {
+      var salePriceInCurrency = _salePriceValue * _salePriceCurrencyRate;
+      _salePrice = salePriceInCurrency.toStringAsFixed(2);
+    }
+  }
+
+  _recalculateCostPriceCurrency() {
+    if (_costPriceValue.isFinite) {
+      var costPriceInCurrency = _costPriceValue * _costPriceCurrencyRate;
+      _costPrice = costPriceInCurrency.toStringAsFixed(2);
+    }
+  }
+
+  _recalculateDiscount() {
+    var discountSalePrice = _salePriceValue * (1 - _discountValue / 100);
+    var discountSalePriceInCurrency = discountSalePrice * _salePriceCurrencyRate;
+    var discountMargin = ((discountSalePrice - _costPriceValue) / discountSalePrice) * 100;
+    var discountMarkup = ((discountSalePrice - _costPriceValue) / _costPriceValue) * 100;
+
+    _discountSalePrice = discountSalePriceInCurrency.toStringAsFixed(2);
+    _explainDiscountSalePrice = _recalculateExplainDiscountSalePrice(_discountSalePrice);
+    _discountMargin = discountMargin.toStringAsFixed(2);
+    _explainDiscountMargin = _recalculateExplainMargin(discountSalePriceInCurrency);
+    _discountMarkup = discountMarkup.toStringAsFixed(2);
+    _explainDiscountMarkup = _recalculateExplainMarkup(discountSalePriceInCurrency);
+  }
+
+  String _recalculateExplainMargin(double salePrice) {
+    var profit = salePrice - _costPriceValue;
+    var displayProfit = profit.toStringAsFixed(2);
+    var displaySalePrice = salePrice.toStringAsFixed(2);
+    var displayCostPrice = _costPriceValue.toStringAsFixed(2);
+    var displayMargin = _marginValue.toStringAsFixed(2);
+    return """
+    Profit = SalePrice - CostPrice
+    $displayProfit = $displaySalePrice - $displayCostPrice
+
+    Margin = (Profit / SalePrice) * 100
+    $displayMargin = ($displayProfit / $displaySalePrice) * 100
+    """;
+  }
+
+  String _recalculateExplainMarkup(double salePrice) {
+    var profit = salePrice - _costPriceValue;
+    var displayProfit = profit.toStringAsFixed(2);
+    var displaySalePrice = salePrice.toStringAsFixed(2);
+    var displayCostPrice = _costPriceValue.toStringAsFixed(2);
+    var displayMarkup = _markupValue.toStringAsFixed(2);
+    return """
+    Profit = SalePrice - CostPrice
+    $displayProfit = $displaySalePrice - $displayCostPrice
+
+    Markup = (Profit / CostPrice) * 100
+    $displayMarkup = ($displayProfit / $displayCostPrice) * 100
+    """;
+  }
+
+  String _recalculateExplainSalePriceFromMargin() {
+    var displaySalePrice = _salePriceValue.toStringAsFixed(2);
+    var displayCostPrice = _costPriceValue.toStringAsFixed(2);
+    var displayMargin = (_marginValue / 100).toStringAsFixed(2);
+    return """
+    SalePrice = CostPrice / (1 - Margin)
+    $displaySalePrice = $displayCostPrice / (1 - $displayMargin)
+    """;
+  }
+
+  String _recalculateExplainSalePriceFromMarkup() {
+    var displaySalePrice = _salePriceValue.toStringAsFixed(2);
+    var displayCostPrice = _costPriceValue.toStringAsFixed(2);
+    var displayMarkup = (_markupValue / 100).toStringAsFixed(2);
+    return """
+    SalePrice = (CostPrice * Markup) + CostPrice
+    $displaySalePrice = ($displayCostPrice * $displayMarkup) + $displayCostPrice
+    """;
+  }
+
+  String _recalculateExplainCostPriceFromMargin() {
+    var displaySalePrice = _salePriceValue.toStringAsFixed(2);
+    var displayCostPrice = _costPriceValue.toStringAsFixed(2);
+    var displayMargin = (_marginValue / 100).toStringAsFixed(2);
+    return """
+    CostPrice = SalePrice - (SalePrice * Margin)
+    $displayCostPrice = $displaySalePrice - ($displaySalePrice * $displayMargin)
+    """;
+  }
+
+  String _recalculateExplainCostPriceFromMarkup() {
+    var displaySalePrice = _salePriceValue.toStringAsFixed(2);
+    var displayCostPrice = _costPriceValue.toStringAsFixed(2);
+    var displayMarkup = (_markupValue / 100).toStringAsFixed(2);
+    return """
+    CostPrice = SalePrice / (Markup + 1)
+    $displayCostPrice = $displaySalePrice / ($displayMarkup + 1)
+    """;
+  }
+
+  String _recalculateExplainDiscountSalePrice(String discountSalePrice) {
+    var displaySalePrice = _salePriceValue.toStringAsFixed(2);
+    var displayDiscount = (_discountValue / 100).toStringAsFixed(2);
+    return """
+    DiscountedSalePrice = SalePrice * (1 - Discount)
+    $discountSalePrice = $displaySalePrice * (1 - $displayDiscount)
+    """;
   }
 }
