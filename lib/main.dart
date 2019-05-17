@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:margin_calculator/calculator.dart';
 import 'package:margin_calculator/calculator_model.dart';
 import 'package:scoped_model/scoped_model.dart';
+// import 'package:flutter/scheduler.dart' show timeDilation;
+// // Enable to slow animations.
+// timeDilation = 5.0;
 
 // TODO: Sentry integration.
 // <https://github.com/flutter/sentry>

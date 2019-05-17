@@ -1,9 +1,12 @@
+import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:margin_calculator/calculator_model.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-// TODO: Use better change detection than onChanged.
+// TODO: Cache selected currencies, previous currency rates.
+// TODO: Information page.
+// TODO: Explanation modals.
 
 class Calculator extends StatefulWidget {
   const Calculator({
@@ -25,11 +28,11 @@ class _CalculatorState extends State<Calculator> {
 
   @override
   void initState() {
+    super.initState();
     fetch = model.fetchCurrenciesRates().then((date) {
       setState(() {});
       return date;
     });
-    super.initState();
   }
 
   @override
@@ -54,12 +57,67 @@ class _CalculatorState extends State<Calculator> {
   }
 }
 
-class _CalculatorActive extends StatelessWidget {
+class _CalculatorActive extends StatefulWidget {
   const _CalculatorActive({
     Key key,
     @required this.date,
   }) : super(key: key);
   final String date;
+
+  @override
+  _CalculatorActiveState createState() => new _CalculatorActiveState(date);
+}
+
+class _CalculatorActiveState extends State<_CalculatorActive> with TickerProviderStateMixin {
+  _CalculatorActiveState(this.date);
+  final String date;
+  AnimationController a1;
+  AnimationController a2;
+  AnimationController a3;
+  AnimationController a4;
+  AnimationController a5;
+
+  @override
+  initState() {
+    super.initState();
+    var incrementMs = 100;
+    a1 = AnimationController(
+      duration: Duration(milliseconds: incrementMs * 1),
+      vsync: this,
+    );
+    a2 = AnimationController(
+      duration: Duration(milliseconds: incrementMs * 2),
+      vsync: this,
+    );
+    a3 = AnimationController(
+      duration: Duration(milliseconds: incrementMs * 3),
+      vsync: this,
+    );
+    a4 = AnimationController(
+      duration: Duration(milliseconds: incrementMs * 4),
+      vsync: this,
+    );
+    a5 = AnimationController(
+      duration: Duration(milliseconds: incrementMs * 5),
+      vsync: this,
+    );
+
+    a1.forward();
+    a2.forward();
+    a3.forward();
+    a4.forward();
+    a5.forward();
+  }
+
+  @override
+  void dispose() {
+    a1?.dispose();
+    a2?.dispose();
+    a3?.dispose();
+    a4?.dispose();
+    a5?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +130,7 @@ class _CalculatorActive extends StatelessWidget {
                 _Header(
                   reset: calculator.reset,
                 ),
+                Text("Exchange rates from $date"),
                 _Price(
                   labelValue: "Cost Price",
                   getCurrencies: () => calculator.currencies,
@@ -80,6 +139,7 @@ class _CalculatorActive extends StatelessWidget {
                   getCurrency: () => calculator.costPriceCurrency,
                   setCurrency: calculator.setCostPriceCurrency,
                   setCurrencyRate: calculator.setCostPriceCurrencyRate,
+                  animationController: a1,
                 ),
                 _Price(
                   labelValue: "Sale Price",
@@ -89,16 +149,19 @@ class _CalculatorActive extends StatelessWidget {
                   getCurrency: () => calculator.salePriceCurrency,
                   setCurrency: calculator.setSalePriceCurrency,
                   setCurrencyRate: calculator.setSalePriceCurrencyRate,
+                  animationController: a2,
                 ),
                 _Percentage(
                   label: "Margin",
                   getPercentage: () => calculator.margin,
                   setPercentage: calculator.setMargin,
+                  animationController: a3,
                 ),
                 _Percentage(
                   label: "Markup",
                   getPercentage: () => calculator.markup,
                   setPercentage: calculator.setMarkup,
+                  animationController: a4,
                 ),
                 _Discount(
                   getDiscount: () => calculator.discount,
@@ -106,8 +169,8 @@ class _CalculatorActive extends StatelessWidget {
                   getDiscountSalePrice: () => calculator.discountSalePrice,
                   getDiscountMargin: () => calculator.discountMargin,
                   getDiscountMarkup: () => calculator.discountMarkup,
+                  animationController: a5,
                 ),
-                Text(date),
               ],
             ),
       ),
@@ -161,6 +224,7 @@ class _Price extends StatefulWidget {
     @required this.getCurrency,
     @required this.setCurrency,
     @required this.setCurrencyRate,
+    @required this.animationController,
   }) : super(key: key);
   final String labelValue;
   final GetCurrenciesCallback getCurrencies;
@@ -169,10 +233,11 @@ class _Price extends StatefulWidget {
   final GetCurrencyCallback getCurrency;
   final SetValueCallback setCurrency;
   final SetValueCallback setCurrencyRate;
+  final AnimationController animationController;
 
   @override
-  _PriceState createState() =>
-      new _PriceState(labelValue, getCurrencies, getPrice, setPrice, getCurrency, setCurrency, setCurrencyRate);
+  _PriceState createState() => new _PriceState(
+      labelValue, getCurrencies, getPrice, setPrice, getCurrency, setCurrency, setCurrencyRate, animationController);
 }
 
 class _PriceState extends State<_Price> {
@@ -184,6 +249,7 @@ class _PriceState extends State<_Price> {
     this.getCurrency,
     this.setCurrency,
     this.setCurrencyRate,
+    this.animationController,
   );
   final String labelValue;
   final GetCurrenciesCallback getCurrencies;
@@ -193,12 +259,32 @@ class _PriceState extends State<_Price> {
   final SetValueCallback setCurrency;
   final SetValueCallback setCurrencyRate;
   final TextEditingController c1 = TextEditingController();
+  final FocusNode fn1 = FocusNode();
   final TextEditingController c2 = TextEditingController();
+  final FocusNode fn2 = FocusNode();
+  final AnimationController animationController;
+
+  @override
+  initState() {
+    super.initState();
+    fn1.addListener(() {
+      if (!fn1.hasFocus) {
+        setPrice(c1.text);
+      }
+    });
+    fn2.addListener(() {
+      if (!fn2.hasFocus) {
+        setCurrencyRate(c2.text);
+      }
+    });
+  }
 
   @override
   dispose() {
     c1?.dispose();
+    fn1?.dispose();
     c2?.dispose();
+    fn2?.dispose();
     super.dispose();
   }
 
@@ -211,79 +297,82 @@ class _PriceState extends State<_Price> {
       c2.text = getCurrency().rate;
     }
     return Flexible(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Flexible(
-                flex: 2,
-                child: Text(labelValue),
-              ),
-              Flexible(
-                flex: 3,
-                child: TextField(
-                  controller: c1,
-                  decoration: InputDecoration(
-                    filled: true,
-                    // border: OutlineInputBorder(
-                    //   borderSide: BorderSide.none,
-                    // ),
-                  ),
-                  keyboardType: TextInputType.number,
-                  onChanged: setPrice,
+      child: FadeTransition(
+        opacity: CurvedAnimation(parent: animationController, curve: Curves.easeIn),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Flexible(
+                  flex: 2,
+                  child: Text(labelValue),
                 ),
-              ),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Flexible(
-                flex: 2,
-                child: Text("Currency"),
-              ),
-              Flexible(
-                flex: 3,
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: getCurrency().code,
-                    // isDense: true,
-                    onChanged: setCurrency,
-                    // style: TextStyle(decoration: )
-                    items: getCurrencies().map((value) {
-                      return DropdownMenuItem(
-                        value: value.code,
-                        child: Text(value.text),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Flexible(
-                flex: 2,
-                child: Text("Currency Rate"),
-              ),
-              Flexible(
-                flex: 3,
-                child: TextField(
-                  controller: c2,
-                  decoration: InputDecoration(
+                Flexible(
+                  flex: 3,
+                  child: TextField(
+                    controller: c1,
+                    focusNode: fn1,
+                    decoration: InputDecoration(
                       filled: true,
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                      )),
-                  keyboardType: TextInputType.number,
-                  onChanged: setCurrencyRate,
+                      // border: OutlineInputBorder(
+                      //   borderSide: BorderSide.none,
+                      // ),
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Flexible(
+                  flex: 2,
+                  child: Text("Currency"),
+                ),
+                Flexible(
+                  flex: 3,
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: getCurrency().code,
+                      // isDense: true,
+                      onChanged: setCurrency,
+                      // style: TextStyle(decoration: )
+                      items: getCurrencies().map((value) {
+                        return DropdownMenuItem(
+                          value: value.code,
+                          child: Text(value.text),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Flexible(
+                  flex: 2,
+                  child: Text("Currency Rate"),
+                ),
+                Flexible(
+                  flex: 3,
+                  child: TextField(
+                    controller: c2,
+                    focusNode: fn2,
+                    decoration: InputDecoration(
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                        )),
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -295,13 +384,15 @@ class _Percentage extends StatefulWidget {
     @required this.label,
     @required this.getPercentage,
     @required this.setPercentage,
+    @required this.animationController,
   }) : super(key: key);
   final String label;
   final GetValueCallback getPercentage;
   final SetValueCallback setPercentage;
+  final AnimationController animationController;
 
   @override
-  _PercentageState createState() => new _PercentageState(label, getPercentage, setPercentage);
+  _PercentageState createState() => new _PercentageState(label, getPercentage, setPercentage, animationController);
 }
 
 class _PercentageState extends State<_Percentage> {
@@ -309,15 +400,29 @@ class _PercentageState extends State<_Percentage> {
     this.label,
     this.getPercentage,
     this.setPercentage,
+    this.animationController,
   );
   final String label;
   final GetValueCallback getPercentage;
   final SetValueCallback setPercentage;
+  final AnimationController animationController;
   final TextEditingController c1 = TextEditingController();
+  final FocusNode fn1 = FocusNode();
+
+  @override
+  initState() {
+    super.initState();
+    fn1.addListener(() {
+      if (!fn1.hasFocus) {
+        setPercentage(c1.text);
+      }
+    });
+  }
 
   @override
   dispose() {
     c1?.dispose();
+    fn1?.dispose();
     super.dispose();
   }
 
@@ -327,28 +432,31 @@ class _PercentageState extends State<_Percentage> {
       c1.text = getPercentage();
     }
     return Flexible(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          Flexible(
-            flex: 2,
-            child: Text(label),
-          ),
-          Flexible(
-            flex: 3,
-            child: TextField(
-              controller: c1,
-              decoration: InputDecoration(
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                  )),
-              keyboardType: TextInputType.number,
-              onChanged: setPercentage,
+      child: FadeTransition(
+        opacity: CurvedAnimation(parent: animationController, curve: Curves.easeIn),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Flexible(
+              flex: 2,
+              child: Text(label),
             ),
-          ),
-        ],
+            Flexible(
+              flex: 3,
+              child: TextField(
+                controller: c1,
+                focusNode: fn1,
+                decoration: InputDecoration(
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                    )),
+                keyboardType: TextInputType.number,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -362,16 +470,18 @@ class _Discount extends StatefulWidget {
     @required this.getDiscountSalePrice,
     @required this.getDiscountMargin,
     @required this.getDiscountMarkup,
+    @required this.animationController,
   }) : super(key: key);
   final GetValueCallback getDiscount;
   final SetValueCallback setDiscount;
   final GetValueCallback getDiscountSalePrice;
   final GetValueCallback getDiscountMargin;
   final GetValueCallback getDiscountMarkup;
+  final AnimationController animationController;
 
   @override
-  _DiscountState createState() =>
-      new _DiscountState(getDiscount, setDiscount, getDiscountSalePrice, getDiscountMargin, getDiscountMarkup);
+  _DiscountState createState() => new _DiscountState(
+      getDiscount, setDiscount, getDiscountSalePrice, getDiscountMargin, getDiscountMarkup, animationController);
 }
 
 class _DiscountState extends State<_Discount> {
@@ -381,17 +491,31 @@ class _DiscountState extends State<_Discount> {
     this.getDiscountSalePrice,
     this.getDiscountMargin,
     this.getDiscountMarkup,
+    this.animationController,
   );
   final GetValueCallback getDiscount;
   final SetValueCallback setDiscount;
   final GetValueCallback getDiscountSalePrice;
   final GetValueCallback getDiscountMargin;
   final GetValueCallback getDiscountMarkup;
+  final AnimationController animationController;
   final TextEditingController c1 = TextEditingController();
+  final FocusNode fn1 = FocusNode();
+
+  @override
+  initState() {
+    super.initState();
+    fn1.addListener(() {
+      if (!fn1.hasFocus) {
+        setDiscount(c1.text);
+      }
+    });
+  }
 
   @override
   dispose() {
     c1?.dispose();
+    fn1?.dispose();
     super.dispose();
   }
 
@@ -401,68 +525,71 @@ class _DiscountState extends State<_Discount> {
       c1.text = getDiscount();
     }
     return Flexible(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Flexible(
-                flex: 2,
-                child: Text("Discount"),
-              ),
-              Flexible(
-                flex: 3,
-                child: TextField(
-                  controller: c1,
-                  decoration: InputDecoration(
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                      )),
-                  keyboardType: TextInputType.number,
-                  onChanged: setDiscount,
+      child: FadeTransition(
+        opacity: CurvedAnimation(parent: animationController, curve: Curves.easeIn),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Flexible(
+                  flex: 2,
+                  child: Text("Discount"),
                 ),
-              ),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Flexible(
-                flex: 2,
-                child: Text("Discount Sale Price"),
-              ),
-              Flexible(
-                flex: 3,
-                child: Text(getDiscountSalePrice()),
-              ),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Flexible(
-                flex: 2,
-                child: Text("Discount Margin"),
-              ),
-              Flexible(
-                flex: 3,
-                child: Text(getDiscountMargin()),
-              ),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Flexible(
-                flex: 2,
-                child: Text("Discount Markup"),
-              ),
-              Flexible(
-                flex: 3,
-                child: Text(getDiscountMarkup()),
-              ),
-            ],
-          ),
-        ],
+                Flexible(
+                  flex: 3,
+                  child: TextField(
+                    controller: c1,
+                    focusNode: fn1,
+                    decoration: InputDecoration(
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                        )),
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Flexible(
+                  flex: 2,
+                  child: Text("Discount Sale Price"),
+                ),
+                Flexible(
+                  flex: 3,
+                  child: Text(getDiscountSalePrice()),
+                ),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Flexible(
+                  flex: 2,
+                  child: Text("Discount Margin"),
+                ),
+                Flexible(
+                  flex: 3,
+                  child: Text(getDiscountMargin()),
+                ),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Flexible(
+                  flex: 2,
+                  child: Text("Discount Markup"),
+                ),
+                Flexible(
+                  flex: 3,
+                  child: Text(getDiscountMarkup()),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
