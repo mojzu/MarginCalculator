@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:margin_calculator/calculator.dart';
 import 'package:margin_calculator/calculator_model.dart';
+import 'package:margin_calculator/style.dart';
 import 'package:scoped_model/scoped_model.dart';
 // import 'package:flutter/scheduler.dart' show timeDilation;
 // // Enable to slow animations.
@@ -11,6 +12,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 void main() {
   final calculator = CalculatorModel();
+  calculator.defaultCurrenciesRates();
 
   runApp(
     ScopedModel<CalculatorModel>(
@@ -32,11 +34,27 @@ class _App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Margin Calculator',
       theme: ThemeData(
-        primarySwatch: Colors.lightGreen,
+        backgroundColor: Colors.grey.shade200,
+        appBarTheme: AppBarTheme(
+          elevation: 0,
+          textTheme: TextTheme(
+            title: TextStyle(
+              fontSize: MediumTextSize,
+              fontFamily: DefaultFontFamily,
+            ),
+          ),
+        ),
+        textTheme: TextTheme(
+          body1: TextStyle(
+            fontSize: BodyTextSize,
+            fontFamily: DefaultFontFamily,
+          ),
+        ),
+        primarySwatch: Colors.deepPurple,
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => Calculator(model: model),
+        '/': (context) => Calculator(model),
       },
     );
   }

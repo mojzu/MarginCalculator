@@ -29,6 +29,7 @@ class CalculatorModel extends Model {
 
   static CalculatorModel of(BuildContext context) => ScopedModel.of<CalculatorModel>(context);
 
+  String _date = "2019-05-15";
   List<Currency> _currencies = [];
   String _costPrice = "";
   double _costPriceValue = double.nan;
@@ -57,6 +58,7 @@ class CalculatorModel extends Model {
   String _explainDiscountMargin = explainNothingHere;
   String _explainDiscountMarkup = explainNothingHere;
 
+  String get date => _date;
   List<Currency> get currencies => _currencies;
   String get costPrice => _costPrice;
   Currency get costPriceCurrency => _getCurrency(_costPriceCurrency);
@@ -127,8 +129,13 @@ class CalculatorModel extends Model {
     _recalculate(_Action.SetDiscount);
   }
 
-  Future<String> fetchCurrenciesRates() async {
-    var date = _defaultCurrenciesRatesDate();
+  defaultCurrenciesRates() {
+    _defaultCurrenciesRates();
+    _recalculate(_Action.SetCostPriceCurrency);
+    _recalculate(_Action.SetSalePriceCurrency);
+  }
+
+  Future<void> fetchCurrenciesRates() async {
     _defaultCurrenciesRates();
 
     try {
@@ -141,7 +148,7 @@ class CalculatorModel extends Model {
           var rate = element.getAttribute("rate");
 
           if (time != null) {
-            date = time;
+            _date = time;
           } else if (currency != null) {
             _setCurrencyRate(currency, rate);
           }
@@ -153,11 +160,6 @@ class CalculatorModel extends Model {
 
     _recalculate(_Action.SetCostPriceCurrency);
     _recalculate(_Action.SetSalePriceCurrency);
-    return date;
-  }
-
-  String _defaultCurrenciesRatesDate() {
-    return "2019-05-15";
   }
 
   _defaultCurrenciesRates() {
