@@ -1,6 +1,6 @@
 name: margin_calculator
 description: Margin calculator.
-version: 3.0.0+1
+version: 3.0.0+30001
 
 environment:
   sdk: ">=2.1.0 <3.0.0"

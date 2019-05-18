@@ -13,6 +13,7 @@ import 'package:scoped_model/scoped_model.dart';
 void main() {
   final calculator = CalculatorModel();
   calculator.defaultCurrenciesRates();
+  calculator.fetchCurrenciesRates();
 
   runApp(
     ScopedModel<CalculatorModel>(
@@ -34,7 +35,7 @@ class _App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Margin Calculator',
       theme: ThemeData(
-        backgroundColor: Colors.grey.shade200,
+        scaffoldBackgroundColor: Colors.grey.shade200,
         appBarTheme: AppBarTheme(
           elevation: 0,
           textTheme: TextTheme(

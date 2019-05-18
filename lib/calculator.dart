@@ -28,7 +28,7 @@ class _CalculatorState extends State<Calculator> with TickerProviderStateMixin {
   @override
   void initState() {
     animationController = AnimationController(
-      duration: Duration(milliseconds: 1000),
+      duration: Duration(milliseconds: 300),
       vsync: this,
     );
     animationController.forward();
@@ -44,6 +44,7 @@ class _CalculatorState extends State<Calculator> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text("Margin Calculator", style: Theme.of(context).appBarTheme.textTheme.title),
         actions: <Widget>[
@@ -60,7 +61,7 @@ class _CalculatorState extends State<Calculator> with TickerProviderStateMixin {
             builder: (context) {
               return IconButton(
                 icon: Icon(Icons.file_download),
-                tooltip: 'Download currency rates',
+                tooltip: 'Download exchange rates',
                 onPressed: () => _fetch(context),
               );
             },
@@ -71,13 +72,13 @@ class _CalculatorState extends State<Calculator> with TickerProviderStateMixin {
         child: ScopedModelDescendant<CalculatorModel>(
           builder: (context, child, calculator) => SingleChildScrollView(
                 child: Container(
-                  color: Colors.grey.shade200,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       _Price(
-                        labelValue: "Cost Price",
+                        label: "Cost Price",
+                        hint: "Enter a cost price",
                         getCurrencies: () => calculator.currencies,
                         getPrice: () => calculator.costPrice,
                         setPrice: calculator.setCostPrice,
@@ -87,7 +88,8 @@ class _CalculatorState extends State<Calculator> with TickerProviderStateMixin {
                         animationController: animationController,
                       ),
                       _Price(
-                        labelValue: "Sale Price",
+                        label: "Sale Price",
+                        hint: "Enter a sale price",
                         getCurrencies: () => calculator.currencies,
                         getPrice: () => calculator.salePrice,
                         setPrice: calculator.setSalePrice,
@@ -98,12 +100,14 @@ class _CalculatorState extends State<Calculator> with TickerProviderStateMixin {
                       ),
                       _Percentage(
                         label: "Margin (%)",
+                        hint: "Enter a margin",
                         getPercentage: () => calculator.margin,
                         setPercentage: calculator.setMargin,
                         animationController: animationController,
                       ),
                       _Percentage(
                         label: "Markup (%)",
+                        hint: "Enter a markup",
                         getPercentage: () => calculator.markup,
                         setPercentage: calculator.setMarkup,
                         animationController: animationController,
@@ -141,9 +145,10 @@ class _CalculatorState extends State<Calculator> with TickerProviderStateMixin {
     final scaffold = Scaffold.of(context);
     scaffold.showSnackBar(
       SnackBar(
-        content: Text(text),
+        content: Text(text, style: Theme.of(context).primaryTextTheme.body1),
         action: SnackBarAction(
           label: 'Hide',
+          textColor: Theme.of(context).primaryTextTheme.body1.color,
           onPressed: scaffold.hideCurrentSnackBar,
         ),
       ),
@@ -160,10 +165,12 @@ class _ValueField extends StatelessWidget {
   const _ValueField({
     Key key,
     @required this.text,
+    @required this.hintText,
     @required this.controller,
     @required this.focusNode,
   }) : super(key: key);
   final String text;
+  final String hintText;
   final TextEditingController controller;
   final FocusNode focusNode;
   final _edgeValue = 10.0;
@@ -199,7 +206,7 @@ class _ValueField extends StatelessWidget {
                   borderSide: BorderSide.none,
                   borderRadius: BorderRadius.zero,
                 ),
-                hintText: "...",
+                hintText: hintText,
               ),
               style: Theme.of(context).textTheme.body1,
               keyboardType: TextInputType.number,
@@ -357,7 +364,8 @@ class _ContainerStyle extends StatelessWidget {
 class _Price extends StatefulWidget {
   const _Price({
     Key key,
-    @required this.labelValue,
+    @required this.label,
+    @required this.hint,
     @required this.getCurrencies,
     @required this.getPrice,
     @required this.setPrice,
@@ -366,7 +374,8 @@ class _Price extends StatefulWidget {
     @required this.setCurrencyRate,
     @required this.animationController,
   }) : super(key: key);
-  final String labelValue;
+  final String label;
+  final String hint;
   final GetCurrenciesCallback getCurrencies;
   final GetValueCallback getPrice;
   final SetValueCallback setPrice;
@@ -377,12 +386,13 @@ class _Price extends StatefulWidget {
 
   @override
   _PriceState createState() => new _PriceState(
-      labelValue, getCurrencies, getPrice, setPrice, getCurrency, setCurrency, setCurrencyRate, animationController);
+      label, hint, getCurrencies, getPrice, setPrice, getCurrency, setCurrency, setCurrencyRate, animationController);
 }
 
 class _PriceState extends State<_Price> {
   _PriceState(
-    this.labelValue,
+    this.label,
+    this.hint,
     this.getCurrencies,
     this.getPrice,
     this.setPrice,
@@ -391,7 +401,8 @@ class _PriceState extends State<_Price> {
     this.setCurrencyRate,
     this.animationController,
   );
-  final String labelValue;
+  final String label;
+  final String hint;
   final GetCurrenciesCallback getCurrencies;
   final GetValueCallback getPrice;
   final SetValueCallback setPrice;
@@ -442,7 +453,8 @@ class _PriceState extends State<_Price> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           _ValueField(
-            text: labelValue,
+            text: label,
+            hintText: hint,
             controller: c1,
             focusNode: fn1,
           ),
@@ -453,7 +465,8 @@ class _PriceState extends State<_Price> {
             setCurrency: setCurrency,
           ),
           _ValueField(
-            text: "Currency Rate",
+            text: "Exchange Rate",
+            hintText: "Enter an exchange rate",
             controller: c2,
             focusNode: fn2,
           ),
@@ -468,27 +481,32 @@ class _Percentage extends StatefulWidget {
   const _Percentage({
     Key key,
     @required this.label,
+    @required this.hint,
     @required this.getPercentage,
     @required this.setPercentage,
     @required this.animationController,
   }) : super(key: key);
   final String label;
+  final String hint;
   final GetValueCallback getPercentage;
   final SetValueCallback setPercentage;
   final AnimationController animationController;
 
   @override
-  _PercentageState createState() => new _PercentageState(label, getPercentage, setPercentage, animationController);
+  _PercentageState createState() =>
+      new _PercentageState(label, hint, getPercentage, setPercentage, animationController);
 }
 
 class _PercentageState extends State<_Percentage> {
   _PercentageState(
     this.label,
+    this.hint,
     this.getPercentage,
     this.setPercentage,
     this.animationController,
   );
   final String label;
+  final String hint;
   final GetValueCallback getPercentage;
   final SetValueCallback setPercentage;
   final AnimationController animationController;
@@ -524,6 +542,7 @@ class _PercentageState extends State<_Percentage> {
         children: <Widget>[
           _ValueField(
             text: label,
+            hintText: hint,
             controller: c1,
             focusNode: fn1,
           ),
@@ -596,31 +615,41 @@ class _DiscountState extends State<_Discount> {
     if (getDiscount() != c1.value.text) {
       c1.text = getDiscount();
     }
-    return _ContainerStyle(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          _ValueField(
-            text: "Discount",
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        _ContainerStyle(
+          child: _ValueField(
+            text: "Discount (%)",
+            hintText: "Enter a discount",
             controller: c1,
             focusNode: fn1,
           ),
-          _ValueDisplay(
-            label: "Discount Sale Price",
-            getValue: getDiscountSalePrice,
+          animationController: animationController,
+        ),
+        _ContainerStyle(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              _ValueDisplay(
+                label: "Discount Sale Price",
+                getValue: getDiscountSalePrice,
+              ),
+              _ValueDisplay(
+                label: "Discount Margin",
+                getValue: getDiscountMargin,
+              ),
+              _ValueDisplay(
+                label: "Discount Markup",
+                getValue: getDiscountMarkup,
+              ),
+            ],
           ),
-          _ValueDisplay(
-            label: "Discount Margin",
-            getValue: getDiscountMargin,
-          ),
-          _ValueDisplay(
-            label: "Discount Markup",
-            getValue: getDiscountMarkup,
-          ),
-        ],
-      ),
-      animationController: animationController,
+          animationController: animationController,
+        ),
+      ],
     );
   }
 }

@@ -13,4 +13,6 @@ Margin and markup calculator with currency conversion and discount.
 # Install Flutter, Dark SDK, Android SDK.
 # Install VS Code plugins: Flutter, Dart.
 $ flutter doctor
+# Copy `key.properties` and `release.keystore` to `/android`.
+$ flutter build apk
 ```

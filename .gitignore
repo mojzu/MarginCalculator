@@ -2,6 +2,10 @@
 # <http://git-scm.com/docs/gitignore>
 /.deprecated
 
+# Android release keys.
+/android/key.properties
+/android/release.keystore
+
 # Miscellaneous
 *.class
 *.log
