@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml/xml.dart' as xml;
 
@@ -24,10 +24,10 @@ enum _Action {
 const explainNothingHere = "Nothing here... awkward turtle-duck.";
 const explainYouDidThis = "You did this!";
 
-class CalculatorModel extends Model {
+class CalculatorModel with ChangeNotifier {
   CalculatorModel();
 
-  static CalculatorModel of(BuildContext context) => ScopedModel.of<CalculatorModel>(context);
+  static CalculatorModel of(BuildContext context) => Provider.of<CalculatorModel>(context);
 
   String _date = "2019-05-15";
   List<Currency> _currencies = [];

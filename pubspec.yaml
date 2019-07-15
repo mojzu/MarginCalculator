@@ -10,8 +10,8 @@ dependencies:
     sdk: flutter
 
   http: ^0.12.0+2
-  scoped_model: ^1.0.0
-  xml: ^3.4.1
+  provider: ^3.0.0+1
+  xml: ^3.5.0
 
 dev_dependencies:
   flutter_test:

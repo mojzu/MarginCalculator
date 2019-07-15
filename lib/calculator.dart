@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:margin_calculator/calculator_model.dart';
 import 'package:margin_calculator/style.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:provider/provider.dart';
 
 // TODO: Cache selected currencies, previous currency rates.
 // TODO: Explanation modals.
@@ -69,8 +69,8 @@ class _CalculatorState extends State<Calculator> with TickerProviderStateMixin {
         ],
       ),
       body: SafeArea(
-        child: ScopedModelDescendant<CalculatorModel>(
-          builder: (context, child, calculator) => SingleChildScrollView(
+        child: Consumer<CalculatorModel>(
+          builder: (context, calculator, child) => SingleChildScrollView(
                 child: Container(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,

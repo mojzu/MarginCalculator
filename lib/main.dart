@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:margin_calculator/calculator.dart';
 import 'package:margin_calculator/calculator_model.dart';
 import 'package:margin_calculator/style.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:provider/provider.dart';
 // import 'package:flutter/scheduler.dart' show timeDilation;
 // // Enable to slow animations.
 // timeDilation = 5.0;
@@ -11,13 +11,14 @@ import 'package:scoped_model/scoped_model.dart';
 // <https://github.com/flutter/sentry>
 
 void main() {
-  final calculator = CalculatorModel();
-  calculator.defaultCurrenciesRates();
-  calculator.fetchCurrenciesRates();
-
   runApp(
-    ScopedModel<CalculatorModel>(
-      model: calculator,
+    ChangeNotifierProvider<CalculatorModel>(
+      builder: (BuildContext context) {
+        final calculator = CalculatorModel();
+        calculator.defaultCurrenciesRates();
+        calculator.fetchCurrenciesRates();
+        return calculator;
+      },
       child: _App(),
     ),
   );
