@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml/xml.dart' as xml;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Currency {
   Currency(this.code, this.text, this.rate);
@@ -91,6 +92,7 @@ class CalculatorModel with ChangeNotifier {
 
   setCostPriceCurrency(String value) {
     _costPriceCurrency = value;
+    _savePreferredCurrencies();
     _recalculate(_Action.SetCostPriceCurrency);
   }
 
@@ -106,6 +108,7 @@ class CalculatorModel with ChangeNotifier {
 
   setSalePriceCurrency(String value) {
     _salePriceCurrency = value;
+    _savePreferredCurrencies();
     _recalculate(_Action.SetSalePriceCurrency);
   }
 
@@ -158,6 +161,7 @@ class CalculatorModel with ChangeNotifier {
       }
     } catch (error) {}
 
+    await _loadPreferredCurrencies();
     _recalculate(_Action.SetCostPriceCurrency);
     _recalculate(_Action.SetSalePriceCurrency);
   }
@@ -198,6 +202,18 @@ class CalculatorModel with ChangeNotifier {
       Currency("THB", "Baht (THB)", "34.157"),
       Currency("ZAR", "Rand (ZAR)", "16.3271"),
     ];
+  }
+
+  _loadPreferredCurrencies() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _costPriceCurrency = prefs.getString("cost_price_currency") ?? _costPriceCurrency;
+    _salePriceCurrency = prefs.getString("sale_price_currency") ?? _salePriceCurrency;
+  }
+
+  _savePreferredCurrencies() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("cost_price_currency", _costPriceCurrency);
+    await prefs.setString("sale_price_currency", _salePriceCurrency);
   }
 
   Currency _getCurrency(String code) {

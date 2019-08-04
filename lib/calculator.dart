@@ -6,7 +6,7 @@ import 'package:margin_calculator/calculator_model.dart';
 import 'package:margin_calculator/style.dart';
 import 'package:provider/provider.dart';
 
-// TODO: Cache selected currencies, previous currency rates.
+// TODO: Cache previous currency rates.
 // TODO: Explanation modals.
 
 class Calculator extends StatefulWidget {
