@@ -15,4 +15,5 @@ Margin and markup calculator with currency conversion and discount.
 $ flutter doctor
 # Copy `key.properties` and `release.keystore` to `/android`.
 $ flutter build apk
+$ flutter build appbundle
 ```
