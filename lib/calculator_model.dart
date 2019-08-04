@@ -29,7 +29,7 @@ class CalculatorModel with ChangeNotifier {
 
   static CalculatorModel of(BuildContext context) => Provider.of<CalculatorModel>(context);
 
-  String _date = "2019-05-15";
+  String _date = "2019-08-02";
   List<Currency> _currencies = [];
   String _costPrice = "";
   double _costPriceValue = double.nan;
@@ -165,38 +165,38 @@ class CalculatorModel with ChangeNotifier {
   _defaultCurrenciesRates() {
     _currencies = [
       Currency("EUR", "Euro (EUR)", "1.0000"),
-      Currency("GBP", "Pound Sterling (GBP)", "0.86250"),
-      Currency("USD", "US Dollar (USD)", "1.1230"),
-      Currency("JPY", "Yen (JPY)", "123.25"),
+      Currency("GBP", "Pound Sterling (GBP)", "0.91505"),
+      Currency("USD", "US Dollar (USD)", "1.1106"),
+      Currency("JPY", "Yen (JPY)", "118.57"),
       Currency("BGN", "Bulgarian Lev (BGN)", "1.9558"),
-      Currency("CZK", "Czech Koruna (CZK)", "25.732"),
-      Currency("DKK", "Danish Krone (DKK)", "7.4658"),
-      Currency("HUF", "Forint (HUF)", "323.52"),
-      Currency("PLN", "Zloty (PLN)", "4.2960"),
-      Currency("RON", "Romanian Leu (RON)", "4.7598"),
-      Currency("SEK", "Swedish Krona (SEK)", "10.8108"),
-      Currency("CHF", "Swiss Franc (CHF)", "1.1378"),
-      Currency("ISK", "Icelandic Krona (ISK)", "137.00"),
-      Currency("NOK", "Norwegian Krone (NOK)", "9.8193"),
-      Currency("HRK", "Kuna (HRK)", "7.4090"),
-      Currency("RUB", "Russian Ruble (RUB)", "73.3493"),
-      Currency("TRY", "Turkish Lira (TRY)", "6.8837"),
-      Currency("AUD", "Australian Dollar (AUD)", "1.6059"),
-      Currency("BRL", "Brazilian Real (BRL)", "4.4405"),
-      Currency("CAD", "Canadian Dollar (CAD)", "1.5132"),
-      Currency("CNY", "Yuan Renminbi (CNY)", "7.6628"),
-      Currency("HKD", "Hong Kong Dollar (HKD)", "8.8135"),
-      Currency("IDR", "Rupiah (IDR)", "16177.38"),
-      Currency("ILS", "New Israeli Sheqel (ILS)", "4.0004"),
-      Currency("INR", "Indian Rupee (INR)", "78.6075"),
-      Currency("KRW", "Won (KRW)", "1325.32"),
-      Currency("MXN", "Mexican Peso (MXN)", "21.5589"),
-      Currency("MYR", "Malaysian Ringgit (MYR)", "4.6781"),
-      Currency("NZD", "New Zealand Dollar (NZD)", "1.7025"),
-      Currency("PHP", "Philippine Peso (PHP)", "58.722"),
-      Currency("SGD", "Singapore Dollar (SGD)", "1.5305"),
-      Currency("THB", "Baht (THB)", "35.464"),
-      Currency("ZAR", "Rand (ZAR)", "15.9762"),
+      Currency("CZK", "Czech Koruna (CZK)", "25.763"),
+      Currency("DKK", "Danish Krone (DKK)", "7.4660"),
+      Currency("HUF", "Forint (HUF)", "326.96"),
+      Currency("PLN", "Zloty (PLN)", "4.3014"),
+      Currency("RON", "Romanian Leu (RON)", "4.7345"),
+      Currency("SEK", "Swedish Krona (SEK)", "10.7223"),
+      Currency("CHF", "Swiss Franc (CHF)", "1.0931"),
+      Currency("ISK", "Icelandic Krona (ISK)", "136.30"),
+      Currency("NOK", "Norwegian Krone (NOK)", "9.9105"),
+      Currency("HRK", "Kuna (HRK)", "7.3815"),
+      Currency("RUB", "Russian Ruble (RUB)", "72.5055"),
+      Currency("TRY", "Turkish Lira (TRY)", "6.2221"),
+      Currency("AUD", "Australian Dollar (AUD)", "1.6365"),
+      Currency("BRL", "Brazilian Real (BRL)", "4.2958"),
+      Currency("CAD", "Canadian Dollar (CAD)", "1.4698"),
+      Currency("CNY", "Yuan Renminbi (CNY)", "7.7058"),
+      Currency("HKD", "Hong Kong Dollar (HKD)", "8.6924"),
+      Currency("IDR", "Rupiah (IDR)", "15772.45"),
+      Currency("ILS", "New Israeli Sheqel (ILS)", "3.8786"),
+      Currency("INR", "Indian Rupee (INR)", "77.3400"),
+      Currency("KRW", "Won (KRW)", "1333.44"),
+      Currency("MXN", "Mexican Peso (MXN)", "21.4542"),
+      Currency("MYR", "Malaysian Ringgit (MYR)", "4.6173"),
+      Currency("NZD", "New Zealand Dollar (NZD)", "1.7026"),
+      Currency("PHP", "Philippine Peso (PHP)", "57.307"),
+      Currency("SGD", "Singapore Dollar (SGD)", "1.5290"),
+      Currency("THB", "Baht (THB)", "34.157"),
+      Currency("ZAR", "Rand (ZAR)", "16.3271"),
     ];
   }
 
